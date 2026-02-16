@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@shared/types": ["packages/types/src/index.ts"],
+      "@shared/types/*": ["packages/types/src/*"],
+      "@shared/logic": ["packages/logic/src/index.ts"],
+      "@shared/logic/*": ["packages/logic/src/*"],
+      "@shared/ui": ["packages/ui/src/index.ts"],
+      "@shared/ui/*": ["packages/ui/src/*"],
+      "@shared/locales": ["packages/locales/src/index.ts"],
+      "@shared/locales/*": ["packages/locales/src/*"],
+      "@apps/*": ["apps/*"],
+      "@portal/*": ["apps/test-portal/src/*"]
+    }
+  }
+}

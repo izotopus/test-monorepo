@@ -1,0 +1,60 @@
+# --- System / OS ---
+.DS_Store
+Thumbs.db
+*.log
+
+# --- Node.js / pnpm ---
+node_modules/
+.pnpm-debug.log*
+# Logi pnpm wewnątrz aplikacji i paczek
+apps/**/node_modules/
+packages/**/node_modules/
+
+# --- Monorepo / Turbo ---
+.turbo
+.npm
+.cache
+
+# --- Astro Specific ---
+.astro/
+dist/
+# Jeśli używasz Astro w trybie SSR, ignorujemy też wpisy serwerowe
+# .vercel / .netlify / .cloudflare
+
+# --- Vite / Preact ---
+# Katalogi wynikowe budowania
+apps/test-dashboard/dist/
+# Logi błędów Vite
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- TypeScript ---
+# Ignorujemy pliki śledzące buildy (wynik composite: true)
+*.tsbuildinfo
+# Jeśli generujesz deklaracje do osobnych folderów
+# types/
+
+# --- Environment Variables ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env.local
+
+# --- IDEs ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Playwright / Testing ---
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache

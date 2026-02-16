@@ -1,0 +1,17 @@
+@import "@shared/ui/styles/tailwind-base.css";
+
+/* Konfiguracja Tailwinda v4 przez @theme */
+@theme {
+  --color-custom-blue: #004a99;
+  --color-custom-gold: #d4af37;
+  --color-custom-dark: #1a1a1a;
+
+  --font-sans: "Inter", "Segoe UI", sans-serif;
+}
+
+/* Globalne style bazowe */
+@layer base {
+  body {
+    @apply antialiased text-slate-900 bg-white;
+  }
+}

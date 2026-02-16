@@ -1,0 +1,143 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+import { getEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { calculateReadingTime } from '@shared/logic';
+
+export async function getStaticPaths() {
+  const homeData = await getEntry('pages', 'home');
+  
+  if (!homeData || !homeData.data.techStack) {
+    console.warn("Brak danych techStack w kolekcji pages/home");
+    return []; 
+  }
+
+  const stack = homeData.data.techStack;
+
+  return stack.map((tech, index) => {
+    const prev = index > 0 ? stack[index - 1] : null;
+    const next = index < stack.length - 1 ? stack[index + 1] : null;
+
+    return {
+      params: { slug: tech.slug },
+      props: { tech, prev, next },
+    };
+  });
+}
+
+const { tech, prev, next } = Astro.props;
+
+const formattedContent = tech.content.replace(
+  /`([^`]+)`/g, 
+  '<code class="bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100 font-mono text-[0.9em] font-medium">$1</code>'
+);
+
+const readingTime = calculateReadingTime(tech.content);
+
+const baseUrl = import.meta.env.BASE_URL;
+
+---
+
+<MainLayout title={tech.name}>
+  <article class="max-w-3xl mx-auto py-20 px-4">
+    <div class="flex items-center gap-4 text-sm text-slate-500 mb-8">
+      <a href=`${baseUrl}` class="hover:text-blue-600">← Powrót</a>
+      <span>•</span>
+      <span class="flex items-center gap-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Przeczytasz w {readingTime} min
+      </span>
+    </div>
+    
+    <header class="mb-10">
+      <div class="h-1 w-20 bg-blue-500 mb-6"></div>
+      <h1 class="text-5xl font-black text-slate-900 mb-4">{tech.name}</h1>
+      <p class="text-xl text-slate-600 italic">{tech.desc}</p>
+    </header>
+
+    {tech.coverImage && (
+      <div class="my-10">
+        <Image 
+          src={tech.coverImage} 
+          alt={`Ilustracja technologii ${tech.name}`}
+          widths={[400, 800, 1200]}
+          sizes="(max-width: 800px) 100vw, 1200px"
+          class="rounded-3xl shadow-2xl w-full h-auto object-cover border border-slate-200"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    )}
+    
+    <div class="prose prose-slate max-w-none">
+      <!-- <p class="text-lg leading-relaxed text-slate-700">
+        {tech.content}
+      </p> -->
+      <p set:html={formattedContent} />
+    </div>
+
+    {tech.glossary && (
+      <footer class="mt-8 pt-4 border-t border-gray-100">
+        <ul class="space-y-2">
+          {tech.glossary.map((item) => (
+            <li class="text-sm text-gray-500">
+              <span class="font-medium text-gray-700">{item.term}</span> – {item.definition}
+            </li>
+          ))}
+        </ul>
+      </footer>
+    )}
+
+    {tech.docsUrl && (
+      <div class="mt-8 flex items-center justify-end border-t border-gray-100 pt-4">
+        <a 
+          href={tech.docsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline transition-all"
+        >
+          <span>Dokumentacja {tech.name}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    )}
+
+    <div class="mt-12 mb-8 p-8 bg-blue-50 rounded-2xl border border-blue-100">
+      <p class="font-bold text-blue-900 mb-2">Status implementacji w Monorepo</p>
+      <p class="text-blue-700 text-sm">Ta technologia jest w pełni zintegrowana z @shared/ui i dostępna dla wszystkich aplikacji w folderze apps/.</p>
+    </div>
+
+    <footer class="mt-16 pt-8 border-t border-slate-200">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
+        
+        <a href={baseUrl} class="text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors">
+          ← Powrót do listy
+        </a>
+
+        <div class="flex items-center gap-4">
+          {prev && (
+            <a href={`${baseUrl}tech/${prev.slug}`} class="group text-right">
+              <span class="block text-[10px] uppercase tracking-widest text-slate-600 group-hover:text-blue-500 transition-colors">Poprzedni</span>
+              <span class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">← {prev.name}</span>
+            </a>
+          )}
+
+          {prev && next && <div class="w-px h-8 bg-slate-200 mx-2" />}
+
+          {next && (
+            <a href={`${baseUrl}tech/${next.slug}`} class="group text-left">
+              <span class="block text-[10px] uppercase tracking-widest text-slate-600 group-hover:text-blue-500 transition-colors">Następny</span>
+              <span class="text-sm font-bold text-slate-700 group-hover:text-blue-600 transition-colors">{next.name} →</span>
+            </a>
+          )}
+        </div>
+      </div>
+    </footer>
+  </article>
+</MainLayout>

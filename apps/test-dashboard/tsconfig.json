@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@shared/ui": ["../../packages/ui/src/index.ts"],
+      "@shared/ui/*": ["../../packages/ui/src/*"],
+      "@shared/logic": ["../../packages/logic/src/index.ts"],
+      "@shared/logic/*": ["../../packages/logic/src/*"],
+      "@shared/locales": ["../../packages/locales/src/index.ts"],
+      "@shared/locales/*": ["../../packages/locales/src/*"],
+      "@shared/types": ["../../packages/types/src/index.ts"],
+      "@shared/types/*": ["../../packages/types/src/*"]
+    }
+  },
+  "include": ["src/**/*", "../../packages/*/src/**/*", "src/global.d.ts"]
+}

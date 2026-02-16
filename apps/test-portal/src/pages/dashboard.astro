@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/MainLayout.astro';
+---
+
+<Layout title="System Dashboard | Universal Monorepo">
+  <main class="container mx-auto px-4 py-8">
+    <div class="flex flex-col gap-6">
+      <header class="border-b border-gray-200 pb-4">
+        <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">
+          Panel Zarządzania
+        </h1>
+        <p class="mt-2 text-sm text-gray-500">
+          Poniższa sekcja jest autonomiczną aplikacją Preact (MFE) zamontowaną wewnątrz hosta Astro.
+        </p>
+      </header>
+
+      <div 
+        id="dashboard-root" 
+        class="min-h-[500px] rounded-xl overflow-hidden border border-gray-200 shadow-xl shadow-blue-500/5 bg-white"
+      >
+        <div class="flex items-center justify-center h-[500px] animate-pulse bg-gray-50">
+          <p class="text-gray-400 font-medium">Inicjalizacja Dashboardu...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const initDashboard = async () => {
+      const container = document.getElementById('dashboard-root');
+      if (!container) return;
+
+      const { mount } = await import('@apps/test-dashboard/src/entry');
+      
+      mount(container);
+    };
+
+    document.addEventListener('astro:page-load', initDashboard);
+  </script>
+</Layout>
+
+<style>
+  #preact-dashboard-root :global(.dashboard-root) {
+    height: 100%;
+  }
+</style>

@@ -1,0 +1,166 @@
+[
+  {
+    "id": "home",
+    "title": "Dokumentacja Stacku",
+    "description": "Interaktywny dashboard technologiczny nowoczesnego Monorepo. Każdy moduł został dobrany pod kątem wydajności i skalowalności.",
+    "techStack": [
+      {
+        "name": "Astro 5",
+        "priority": 1,
+        "slug": "astro-5",
+        "desc": "Fundament Islands Architecture i szybki routing.",
+        "docsUrl": "https://docs.astro.build/en/getting-started/",
+        "content": "Astro to framework zorientowany na treść, który domyślnie serwuje zero JavaScriptu. Dzięki architekturze 'wysp' (Islands Architecture)*, izoluje interaktywne komponenty i automatycznie optymalizuje multimedia, serwując je w formatach WebP/AVIF bez dodatkowej konfiguracji.",
+        "icon": "🚀",
+        "coverImage": "@assets/tech/astro-bg.jpg",
+        "glossary": [
+          { "term": "* Islands Architecture", "definition": "Metoda budowania stron, w której statyczny HTML jest bazą, a interaktywne komponenty są ładowane niezależnie tylko wtedy, gdy są potrzebne." }
+        ]
+      },
+      {
+        "name": "TypeScript",
+        "priority": 2,
+        "slug": "typescript",
+        "desc": "Statyczne typowanie i solidny kontrakt danych.",
+        "docsUrl": "https://www.typescriptlang.org/docs/",
+        "content": "Fundament bezpieczeństwa kodu. TS eliminuje błędy runtime* i pozwala na definiowanie sztywnych schematów danych (Zod), które gwarantują, że komunikacja między różnymi częściami systemu jest zawsze przewidywalna i bezbłędna.",
+        "icon": "🟦",
+        "coverImage": "@assets/tech/ts-code.jpg",
+        "glossary": [
+          { "term": "* Błędy runtime", "definition": "Błędy występujące podczas działania aplikacji, których TypeScript pozwala uniknąć poprzez wykrycie ich już w edytorze kodu." }
+        ]
+      },
+      {
+        "name": "pnpm Workspaces",
+        "priority": 3,
+        "slug": "pnpm-workspaces",
+        "desc": "Efektywne zarządzanie monorepo i aliasami ścieżek.",
+        "docsUrl": "https://pnpm.io/workspaces",
+        "content": "Pozwala na pełną separację obaw (Separation of Concerns*). Aplikacje rezydują w folderze `apps/`, a wspólna logika w `packages/`. Dzięki aliasom ścieżek, importy są czyste i natychmiastowo rozwiązywane przez system.",
+        "icon": "📦",
+        "coverImage": "@assets/tech/pnpm-boxes.jpg",
+        "glossary": [
+          { "term": "* Separation of Concerns", "definition": "Zasada projektowania systemów polegająca na rozdzieleniu różnych funkcjonalności do osobnych modułów." }
+        ]
+      },
+      {
+        "name": "Tailwind v4",
+        "priority": 4,
+        "slug": "tailwind-v4",
+        "desc": "Stylizacja oparta na natywnych zmiennych CSS.",
+        "docsUrl": "https://tailwindcss.com/docs/v4-beta",
+        "content": "Wykorzystuje natywne zmienne CSS i silnik LightningCSS**, dzięki czemu proces budowania stylów jest do 10x szybszy. System kolorów i typografii staje się częścią środowiska przeglądarki, a nie ciężkiego pliku CSS.",
+        "icon": "🎨",
+        "coverImage": "@assets/tech/tw-styles.jpg",
+        "glossary": [
+          { "term": "** LightningCSS", "definition": "Ekstremalnie szybki silnik do przetwarzania kodu CSS napisany w języku Rust." }
+        ]
+      },
+      {
+        "name": "Lit",
+        "priority": 5,
+        "slug": "lit-components",
+        "desc": "Natywne Web Components dla krytycznych elementów UI.",
+        "docsUrl": "https://lit.dev/docs/",
+        "content": "Pozwala tworzyć lekkie, standardowe komponenty webowe (Web Components*) działające w każdym środowisku. Dzięki umieszczeniu ich w `@shared/ui`, ten sam przycisk czy menu może być użyte w dowolnej aplikacji bez żadnych zmian w kodzie.",
+        "icon": "🔥",
+        "coverImage": "@assets/tech/lit-fire.jpg",
+        "glossary": [
+          { "term": "* Web Components", "definition": "Standard API przeglądarkowych pozwalający na tworzenie reużywalnych elementów HTML z izolacją stylów." }
+        ]
+      },
+      {
+        "name": "Alpine.js",
+        "priority": 6,
+        "slug": "alpine-js",
+        "desc": "Lekka interaktywność bez narzutu frameworków.",
+        "docsUrl": "https://alpinejs.dev/docs",
+        "content": "Zapewnia nowoczesną reaktywność* przy minimalnej wadze. Idealny do obsługi interakcji wewnątrz 'wysp' Astro (filtry, modale, stany UI), dając deweloperowi narzędzia znane z Vue czy Reacta przy ułamku ich ciężaru.",
+        "icon": "🏔️",
+        "coverImage": "@assets/tech/alpine-mountain.jpg",
+        "glossary": [
+          { "term": "* Reaktywność", "definition": "Automatyczne aktualizowanie interfejsu w momencie, gdy zmieniają się dane, na których bazuje strona." }
+        ]
+      },
+      {
+        "name": "Query Core",
+        "priority": 7,
+        "slug": "query-core",
+        "desc": "Zarządzanie asynchronicznymi danymi i cache.",
+        "docsUrl": "https://tanstack.com/query/latest/docs/framework/react/overview",
+        "content": "Odpowiada za pobieranie i synchronizację danych z API. Mechanizm cache'owania* unika zbędnych zapytań do serwera, serwując dane natychmiastowo i odświeżając je w tle bez blokowania interfejsu.",
+        "icon": "🔄",
+        "coverImage": "@assets/tech/query-sync.jpg",
+        "glossary": [
+          { "term": "* Cache'owanie", "definition": "Zapisywanie danych w pamięci podręcznej, aby skrócić czas ładowania przy kolejnej próbie dostępu." }
+        ]
+      },
+      {
+        "name": "Performance & Quality",
+        "priority": 8,
+        "slug": "performance-quality",
+        "desc": "Błyskawiczny build i doskonałe wyniki UX.",
+        "docsUrl": "https://web.dev/vitals/",
+        "content": "Synergia szybkości i jakości. Dzięki narzędziom w Rust (Lightning Build) proces tworzenia jest natychmiastowy, a rygorystyczne standardy (ESLint/Prettier) gwarantują spójność. Wszystko to przekłada się na mierzalne wyniki Core Web Vitals, zapewniając użytkownikowi najwyższy komfort pracy.",
+        "icon": "⚡",
+        "coverImage": "@assets/tech/perf-metrics.jpg",
+        "glossary": [
+          { "term": "* Core Web Vitals", "definition": "Metryki Google oceniające szybkość, interaktywność i stabilność wizualną strony." }
+        ]
+      },
+      {
+        "name": "Native Standards",
+        "priority": 9,
+        "slug": "native-standards",
+        "desc": "Architektura oparta na fundamentach sieci.",
+        "docsUrl": "https://developer.mozilla.org/en-US/docs/Web/API",
+        "content": "Odcinamy się od chwilowych trendów na rzecz natywnych Web Standards. Wykorzystanie ESM, Web Components i Custom Events sprawia, że system jest lekki, bezpieczny i odporny na starzenie. To architektura 'future-proof', która będzie działać bezbłędnie przez lata.",
+        "icon": "🌐",
+        "coverImage": "@assets/tech/web-standards.jpg",
+        "glossary": [
+          { "term": "* Web Standards", "definition": "Otwarte, ustandaryzowane technologie wspierane natywnie przez wszystkie nowoczesne przeglądarki." }
+        ]
+      },
+      {
+        "name": "Modular I18n",
+        "priority": 10,
+        "slug": "internationalization",
+        "desc": "Skalowalna lokalizacja z podziałem domenowym i Signals.",
+        "docsUrl": "https://docs.astro.build/en/guides/internationalization/",
+        "content": "System oparty na autonomicznych pakietach językowych rejestrujących się w globalnym Managerze. Dzięki architekturze 'Side-effect Import'*, aplikacja ładuje tylko te domeny tłumaczeń, które są aktualnie wymagane (np. auth, dashboard), co drastycznie redukuje rozmiar bundle'a JS.",
+        "icon": "🌍",
+        "coverImage": "@assets/tech/locales-globe.jpg",
+        "glossary": [
+          { "term": "* Side-effect Import", "definition": "Wzorzec, w którym import modułu automatycznie wykonuje akcję (np. rejestrację w Managerze), upraszczając konfigurację i wspierając Tree-shaking." }
+        ]
+      },
+      {
+        "name": "Zod Validation",
+        "priority": 11,
+        "slug": "zod-schemas",
+        "desc": "Schema-first design i współdzielona walidacja danych.",
+        "docsUrl": "https://zod.dev/",
+        "content": "Wykorzystanie Zod jako 'Single Source of Truth'* dla typów TypeScript i walidacji runtime. Schematy zdefiniowane w @shared/types są bezpośrednio używane w aplikacjach, komponentach Lit oraz w i18n-managerze do generowania spójnych komunikatów błędów w wielu językach.",
+        "icon": "🛡️",
+        "coverImage": "@assets/tech/schema-first.jpg",
+        "glossary": [
+          { "term": "* Single Source of Truth", "definition": "Praktyka strukturyzowania modeli danych w taki sposób, aby każda informacja miała tylko jedno, oficjalne miejsce pochodzenia w całym systemie." }
+        ]
+      },
+      {
+        "name": "Turborepo - Universal Ecosystem",
+        "priority": 0,
+        "slug": "monorepo-architecture",
+        "desc": "Skalowalna architektura z podziałem na aplikacje i współdzielone pakiety. Całkowita niezależność od hosta. ",
+        "docsUrl": "https://turbo.build/repo/docs",
+        "content": "Projekt zorganizowany w architekturze Monorepo*, zarządzany przez Turborepo i pnpm. Całość dzieli się na dwa kluczowe katalogi: 'apps/' zawierający gotowe produkty (Astro, React) oraz 'packages/' będący zbiorem atomowych bibliotek (@shared/ui, logic, types, locales). Taki układ umożliwia błyskawiczne budowanie dzięki cache'owaniu zadań i gwarantuje spójność kodu w całym ekosystemie. Kluczowym założeniem tego monorepo jest elastyczność. Paczki w @shared są 'framework-aware' ale nie 'framework-dependent'. Każdy moduł dostarcza natywne komponenty oraz uniwersalne funkcje montujące, co pozwala na osadzenie logiki i UI w dowolnym środowisku: od nowoczesnych wysp Astro, przez Reacta, aż po czysty HTML i legacy systemy.",
+        "icon": "🏗️",
+        "coverImage": "@assets/tech/turbo-struct.jpg",
+        "glossary": [
+          { "term": "* Monorepo", "definition": "Strategia rozwoju oprogramowania, w której kod wielu projektów (aplikacji i bibliotek) znajduje się w jednym repozytorium, co ułatwia zarządzanie zależnościami i współdzielenie logiki." },
+          { "term": "** Framework-aware", "definition": "Zdolność kodu do wykorzystania optymalizacji danego frameworka przy jednoczesnym zachowaniu możliwości działania poza nim." }
+        ]
+      }
+    ]
+  }
+]

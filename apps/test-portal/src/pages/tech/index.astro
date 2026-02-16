@@ -1,0 +1,20 @@
+---
+import MainLayout from '@layouts/MainLayout.astro';
+import TechGrid from '@components/TechGrid.astro';
+import { getEntry } from 'astro:content';
+
+const homeData = await getEntry('pages', 'home');
+if (!homeData) return Astro.redirect('/404');
+
+const { title, techStack } = homeData.data;
+---
+
+<MainLayout title={title}>
+  <main 
+    class="max-w-7xl mx-auto py-20 px-4" 
+  >
+
+    <TechGrid techStack={techStack} />
+    
+  </main>
+</MainLayout>

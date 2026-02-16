@@ -1,0 +1,3 @@
+<FilesMatch "\.(js|css|webp|avif)$">
+  Header set Cache-Control "max-age=31536000, immutable"
+</FilesMatch>

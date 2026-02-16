@@ -1,0 +1,117 @@
+---
+import type { TechItem } from '@shared/types';
+import type { ImageMetadata } from 'astro';
+
+type TechItemWithImage = Omit<TechItem, 'coverImage'> & {
+  coverImage?: ImageMetadata;
+};
+
+interface Props {
+  techStack: TechItemWithImage[];
+}
+
+const { techStack } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL || '/';
+
+const techStackSorted = techStack.sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99))
+const techStackData = techStack
+  .map(t => ({ 
+    name: t.name, 
+    desc: t.desc, 
+    slug: t.slug 
+  }));
+---
+
+<div 
+  x-data={`{ 
+    search: '', 
+    items: ${JSON.stringify(techStackData)},
+    get visibleSlugs() {
+      return $store.app.actions.getVisibleSlugs(search, this.items)
+    }
+  }`}
+>
+  <div class="tech-grid">
+    {techStackSorted.map((tech) => (
+      <div 
+        class="tech-card group relative transition-all duration-300 flex flex-col h-full cursor-pointer overflow-hidden"
+        x-show="visibleSlugs.includes($el.dataset.slug)"
+        data-slug={tech.slug}
+        x-transition
+      >
+        <div class="h-2 w-12 bg-blue-500 mb-4 group-hover:w-full transition-all duration-300"></div>
+        
+        <div class="flex items-start justify-between mb-4 px-1">
+          <div class="flex flex-col">
+            <h2 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+              {tech.name}
+            </h2>
+            <p class="text-slate-500 mt-2 text-sm leading-relaxed line-clamp-2">
+              {tech.desc}
+            </p>
+          </div>
+          <span class="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110">
+            {tech.icon}
+          </span>
+        </div>
+        
+        <div class="mt-auto pt-6 px-1">
+          <a 
+            href={`${baseUrl}tech/${tech.slug}`} 
+            class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors after:absolute after:inset-0 after:z-10"
+          >
+            Dowiedz się więcej 
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <template x-if="visibleSlugs.length === 0">
+    <div class="text-center py-20">
+      <h3 class="text-xl font-bold text-slate-900">Brak wyników</h3>
+    </div>
+  </template>
+</div>
+
+{/* <div class="tech-grid">
+  {techStack.map((tech) => (
+    <div 
+      class="tech-card group relative transition-all duration-300 flex flex-col h-full cursor-pointer overflow-hidden"
+      x-show={`
+        '${[tech.name, tech.desc].join(' ')}'.toLowerCase().includes(search.toLowerCase())
+      `}
+    >
+      <div class="h-2 w-12 bg-blue-500 mb-4 group-hover:w-full transition-all duration-300"></div>
+      
+      <div class="flex items-start justify-between mb-4 px-1">
+        <div class="flex flex-col">
+          <h2 class="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+            {tech.name}
+          </h2>
+          <p class="text-slate-500 mt-2 text-sm leading-relaxed line-clamp-2">
+            {tech.desc}
+          </p>
+        </div>
+        <span class="text-3xl filter grayscale group-hover:grayscale-0 transition-all duration-300 transform group-hover:scale-110">
+          {tech.icon}
+        </span>
+      </div>
+      
+      <div class="mt-auto pt-6 px-1">
+        <a 
+          href={`${baseUrl}tech/${tech.slug}`} 
+          class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors after:absolute after:inset-0 after:z-10"
+        >
+          Dowiedz się więcej 
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  ))}
+</div> */}

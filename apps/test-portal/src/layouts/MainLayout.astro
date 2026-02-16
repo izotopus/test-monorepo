@@ -1,0 +1,77 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '@styles/global.css';
+import '@styles/main.scss';
+
+const { title } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL;
+
+---
+<html lang="pl" class="h-full">
+  <head>
+    <ClientRouter />
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <meta name="description" content="Test monorepo - Interaktywny dashboard technologiczny nowoczesnego Monorepo" />
+  </head>
+  <body class="bg-slate-50 antialiased min-h-full flex flex-col">
+    <a 
+      href="#main-content" 
+      class="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:p-4 focus:bg-blue-600 focus:text-white"
+    >
+      Przejdź do treści głównej
+    </a>
+    
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 p-4">
+      <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <a href={baseUrl} class="text-xl font-black tracking-tighter text-slate-900 hover:opacity-80 transition-opacity">
+          TEST-MONO<span class="text-blue-600">REPO</span>
+        </a>
+        <div class="space-x-6 text-sm font-medium">
+          <a href={baseUrl} class="text-slate-600 hover:text-blue-600">Informacje</a>
+          <a href={`${baseUrl}demo/`} class="text-slate-600 hover:text-blue-600">Demo</a>
+          <a href={`${baseUrl}dashboard/`} class="text-slate-600 hover:text-blue-600">Dashboard</a>
+        </div>
+      </div>
+
+      {/* Progress bar (Global Store) */}
+      <div 
+        x-data
+        class="fixed top-0 left-0 w-full h-1 bg-blue-500 z-[9999] transition-transform duration-300"
+        :class="$store.app?.busy ? '' : '-translate-y-full'"
+      />
+
+      {/* Spinner Example */}
+      <div
+        x-data="loaderExample"
+        x-show="isLoading"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="absolute top-4 left-4 h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"
+        x-cloak
+      />
+    </nav>
+
+    <main id="main-content" class="flex-grow">
+      <slot />
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-8 shrink-0">
+      <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+        &copy; {new Date().getFullYear()} Test Monorepo.
+      </div>
+    </footer>
+
+    <script>
+      import { bootstrap } from '@scripts/bootstrap';
+      bootstrap();
+      document.addEventListener('astro:page-load', () => {
+        bootstrap();
+      }, { once: false });
+    </script>
+  </body>
+</html>

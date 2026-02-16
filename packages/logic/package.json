@@ -1,0 +1,21 @@
+{
+  "name": "@shared/logic",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./utils": "./src/utils/index.ts",
+    "./signals": "./src/signals/index.ts"
+  },
+  "dependencies": {
+    "@shared/locales": "workspace:*",
+    "@shared/types": "workspace:*",
+    "@preact/signals-core": "^1.13.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

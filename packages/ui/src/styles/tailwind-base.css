@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@source "../../../../**/*.{ts,tsx,js,html,astro}";
+
+@theme {
+  --color-custom-blue: #004a99;
+  --color-custom-gold: #d4af37;
+  --color-custom-dark: #1a1a1a;
+
+  --font-sans: "Inter", "Segoe UI", sans-serif;
+}

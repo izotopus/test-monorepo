@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "@shared/ui/styles/tailwind-base.css";
+
+/* Wskazujemy katalog src względem roota aplikacji */
+@source "/src/**/*.{ts,tsx}";
