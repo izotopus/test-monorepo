@@ -7,6 +7,8 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./api": "./src/api/index.ts",
+    "./utilsmicrofrontends": "./src/microfrontends/index.ts",
     "./utils": "./src/utils/index.ts",
     "./signals": "./src/signals/index.ts"
   },

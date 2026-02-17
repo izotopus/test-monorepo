@@ -1,22 +1,27 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'path';
+import { resolve } from 'path';
 
 export default defineConfig({
+  base: process.env.BASE_URL || '/',
   plugins: [
     preact({
-      include: [/\.test-dashboard\/src\/.*\.tsx?$/], // Przetwarzaj tylko pliki dashboardu
+      include: [/\.test-dashboard\/src\/.*\.tsx?$/],
     }),
     tailwindcss(),
   ],
   resolve: {
     alias: {
-      '@shared/ui': path.resolve(__dirname, '../../packages/ui/src'),
-      '@shared/logic': path.resolve(__dirname, '../../packages/logic/src'),
-      '@shared/locales': path.resolve(__dirname, '../../packages/locales/src'),
-      '@shared/types': path.resolve(__dirname, '../../packages/types/src'),
-      '@': path.resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src'),
+      '@hooks': resolve(__dirname, './src/hooks'),
+      '@components': resolve(__dirname, './src/components'),
+      '@adapters': resolve(__dirname, './src/adapters'),
+      
+      '@shared/ui': resolve(__dirname, '../../packages/ui/src'),
+      '@shared/logic': resolve(__dirname, '../../packages/logic/src'),
+      '@shared/locales': resolve(__dirname, '../../packages/locales/src'),
+      '@shared/types': resolve(__dirname, '../../packages/types/src'),
     },
   },
   server: {

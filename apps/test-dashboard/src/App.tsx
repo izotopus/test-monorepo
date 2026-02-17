@@ -3,8 +3,19 @@ import { LocationProvider, Router, Route } from 'preact-iso';
 import { useEffect, useState } from 'preact/hooks';
 
 import RegisterFormComponent from './adapters/RegisterForm';
+import { useMicroApp } from './hooks/useMicroApp';
+import { MFErrorBoundary } from './components/MFErrorBoundary';
+import { GlobalEventListener } from './components/GlobalEventListener';
+import { getMFConfig, createCommunicationBridge } from '@shared/logic';
+import { TM_MicroAppProps } from '@shared/types';
+import { ThemeSwitcher } from './components/ThemeSwitcher';
 
 import Alpine from 'alpinejs';
+
+interface LoaderProps {
+  user: TM_MicroAppProps['user'];
+  theme: TM_MicroAppProps['theme'];
+}
 
 type HandleFormChangeFn = ComponentProps<typeof RegisterFormComponent>['handleFormChange'];
 
@@ -13,7 +24,40 @@ if (typeof window !== 'undefined' && !(window as any).Alpine) {
   Alpine.start();
 }
 
-const Stats = () => (
+const TaskTab = () => {
+  const user = { id: 'user-99', name: 'Jan Kowalski', role: 'developer' };
+  const theme = 'light';
+
+  return (
+    <MFErrorBoundary name="Task Manager">
+      <TaskAppLoader 
+        user={user} 
+        theme={theme} 
+      />
+    </MFErrorBoundary>
+  );
+};
+
+const TaskAppLoader = ({ user, theme }: LoaderProps) => {
+  const { app, manifest, loading, error } = useMicroApp(getMFConfig('TASK_MANAGER'));
+
+  if (loading) return <div>Ładowanie...</div>;
+  if (error) throw error;
+
+  return (
+    <div ref={(el) => {
+      if (el && app) {
+        app.mount(
+          el,
+          createCommunicationBridge(manifest!, user, theme)
+        );
+        return () => app.unmount?.();
+      }
+    }} />
+  );
+};
+
+const StartTab = () => (
   <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
     <h2 class="text-xl font-bold mb-4 text-blue-700">📊 Statystyki Systemu</h2>
     <div class="grid grid-cols-2 gap-4">
@@ -23,7 +67,7 @@ const Stats = () => (
   </div>
 );
 
-const RegisterForm = () => {
+const RegisterFormTab = () => {
   const [formData, setFormData] = useState({});
 
   const handleFormChange: HandleFormChangeFn = (formData) => {
@@ -74,8 +118,9 @@ export const App = () => {
       return () => window.removeEventListener('hashchange', handleHashChange);
     }, []);
 
-    if (hash === '#/register-form') return <RegisterForm />;
-    return <Stats />;
+    if (hash === '#/register-form') return <RegisterFormTab />;
+    else if (hash === '#/task') return <TaskTab />;
+    return <StartTab />;
   };
 
   const navigate = (to: string) => (e: MouseEvent) => {
@@ -86,25 +131,38 @@ export const App = () => {
 
   return (
     <LocationProvider>
-      <div class="flex flex-col h-full bg-gray-50 text-slate-800 font-sans">
+      <GlobalEventListener />
+      <div className="flex flex-col h-full bg-gray-50 text-slate-800 font-sans">
         
-        <nav class="flex items-center gap-2 p-4 border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
+        <nav className="flex items-center gap-2 p-4 border-b bg-white/80 backdrop-blur-md sticky top-0 z-10">
           <button 
             onClick={navigate('/')}
-            class={`px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
               currentPath === '/' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
-            Statystyki
+            Start
+          </button>
+          <button 
+            onClick={navigate('/task')}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
+              currentPath === '/task' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-600 hover:bg-slate-100'
+            }`}
+          >
+            Test TaskManager
           </button>
           <button 
             onClick={navigate('/register-form')}
-            class={`px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all cursor-pointer ${
               currentPath === '/register-form' ? 'bg-blue-600 text-white shadow-md shadow-blue-200' : 'text-slate-600 hover:bg-slate-100'
             }`}
           >
             Formularze rejestracyjny
           </button>
+          
+          {currentPath === '/task' && <div className="ml-auto mr-0">
+            <ThemeSwitcher />
+          </div>}
         </nav>
 
         <main class="flex-1 p-4">

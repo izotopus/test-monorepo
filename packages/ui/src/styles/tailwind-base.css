@@ -3,9 +3,19 @@
 @source "../../../../**/*.{ts,tsx,js,html,astro}";
 
 @theme {
-  --color-custom-blue: #004a99;
-  --color-custom-gold: #d4af37;
-  --color-custom-dark: #1a1a1a;
-
+  /* Kolory zależne od zmiennych CSS */
+  --color-brand-bg: var(--brand-bg);
+  --color-brand-text: var(--brand-text);
   --font-sans: "Inter", "Segoe UI", sans-serif;
+}
+
+/* Definicja wartości dla konkretnych klas/atrybutów */
+:root {
+  --brand-bg: #ffffff;
+  --brand-text: #0f172a;
+}
+
+.dark {
+  --brand-bg: #0f172a;
+  --brand-text: #f8fafc;
 }

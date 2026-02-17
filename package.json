@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build:all": "pnpm recursive run build",
+    "build:all:prod": "BASE_URL=/monorepo/ pnpm recursive run build",
+    "postbuild:all": "node scripts/collect-modules.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,6 +24,7 @@
     "@preact/signals-core": "^1.13.0",
     "@tanstack/query-core": "^5.90.20",
     "alpinejs": "^3.15.8",
+    "fs-extra": "^11.3.3",
     "lit": "^3.3.2",
     "sharp": "^0.34.5"
   },

@@ -9,10 +9,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const BASE_URL = process.env.BASE_URL || '/';
-
 export default defineConfig({
-  base: BASE_URL,
+  base: process.env.BASE_URL || '/',
   integrations: [alpinejs(), lit()],
   vite: {
     plugins: [
