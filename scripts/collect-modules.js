@@ -2,23 +2,40 @@ const fs = require('fs');
 const path = require('path');
 
 const modules = [
-  { name: 'task-manager', from: 'apps/test-task-manager/dist/main.js' },
-  // { name: 'analytics', from: 'apps/test-analytics/dist/main.js' }
+  { name: 'task-manager', distDir: 'apps/test-task-manager/dist' },
+  // { name: 'analytics', distDir: 'apps/test-analytics/dist' }
 ];
 
 const portalDist = path.join(__dirname, '../apps/test-portal/dist/modules');
 
+function copyDirRecursive(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+
+  for (let entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
 async function collect() {
   try {
     for (const mod of modules) {
-      const source = path.join(__dirname, '..', mod.from);
-      const destFolder = path.join(portalDist, mod.name);
-      const destFile = path.join(destFolder, 'main.js');
+      const sourceDir = path.join(__dirname, '..', mod.distDir);
+      const destDir = path.join(portalDist, mod.name);
 
-      fs.mkdirSync(destFolder, { recursive: true });
-      
-      fs.copyFileSync(source, destFile);
-      console.log(`✅ Module ${mod.name} collected to ${destFile}`);
+      if (fs.existsSync(sourceDir)) {
+        copyDirRecursive(sourceDir, destDir);
+        console.log(`✅ Module ${mod.name}: All files collected to ${destDir}`);
+      } else {
+        console.warn(`⚠️ Warning: Source directory ${sourceDir} not found. Skipping.`);
+      }
     }
   } catch (err) {
     console.error('❌ Error collecting modules:', err.message);

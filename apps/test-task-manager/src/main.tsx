@@ -1,8 +1,11 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import App from './App';
-import './index.css';
 import { MicroAppManifest } from '@shared/types';
+
+if (import.meta.env.DEV) {
+  import('./index.css');
+}
 
 let root: Root | null = null;
 

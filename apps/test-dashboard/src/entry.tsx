@@ -1,6 +1,9 @@
-import './index.css';
 import { h, render } from 'preact';
 import { App } from './App';
+
+if (import.meta.env.DEV) {
+  import('./index.css');
+}
 
 export const mount = (container: HTMLElement) => {
   render(<App />, container);
