@@ -11,7 +11,7 @@ const MF_SETTINGS = {
     dev: 'http://localhost:3002/src/main.tsx',
     prod: '/modules/task-manager/main.js',
     type: 'react' as MFType,
-    forceUrl: null // Tu możesz wpisać stringa, żeby wymusić konkretny URL
+    forceUrl: null
   },
   ANALYTICS: {
     dev: 'http://localhost:3003/src/main.tsx',

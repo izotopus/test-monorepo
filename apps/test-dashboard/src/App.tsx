@@ -4,11 +4,12 @@ import { useEffect, useState } from 'preact/hooks';
 
 import RegisterFormComponent from './adapters/RegisterForm';
 import { useMicroApp } from './hooks/useMicroApp';
-import { MFErrorBoundary } from './components/MFErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { GlobalEventListener } from './components/GlobalEventListener';
 import { getMFConfig, createCommunicationBridge } from '@shared/logic';
 import { TM_MicroAppProps } from '@shared/types';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
+import { useLogger } from './providers/LoggerProvider';
 
 import Alpine from 'alpinejs';
 
@@ -25,16 +26,17 @@ if (typeof window !== 'undefined' && !(window as any).Alpine) {
 }
 
 const TaskTab = () => {
+  const logger = useLogger();
   const user = { id: 'user-99', name: 'Jan Kowalski', role: 'developer' };
   const theme = 'light';
 
   return (
-    <MFErrorBoundary name="Task Manager">
+    <ErrorBoundary name="Task Manager" logger={logger}>
       <TaskAppLoader 
         user={user} 
         theme={theme} 
       />
-    </MFErrorBoundary>
+    </ErrorBoundary>
   );
 };
 
@@ -68,11 +70,12 @@ const StartTab = () => (
 );
 
 const RegisterFormTab = () => {
+  const logger = useLogger();
   const [formData, setFormData] = useState({});
 
   const handleFormChange: HandleFormChangeFn = (formData) => {
     setFormData(formData);
-    console.log('Dane z formularza w Preact:', formData);
+    logger.debug('RegisterForm', 'Dane z formularza w Preact:', formData);
   };
 
   return (
@@ -104,7 +107,6 @@ const NotFound = () => (
 );
 
 export const App = () => {
-
   const [currentPath, setCurrentPath] = useState(
     typeof window !== 'undefined' ? window.location.hash.replace('#', '') || '/' : '/'
   );

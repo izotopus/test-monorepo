@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { TM_MicroAppProps, GenericMfEvent } from '@shared/types';
+import { useLogger } from './providers/LoggerProvider';
 
 const App = ({
   standalone = false,
   theme: initialTheme,
-  user, subscribe,
-  logger, onEvent
+  user,
+  subscribe,
+  // logger,
+  onEvent,
 }: TM_MicroAppProps) => {
+  const logger = useLogger();
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
 
   useEffect(() => {
     if (typeof subscribe !== 'function') {
-      logger.warn('[MF-Task] Running without communication bridge (standalone?)');
+      logger.error('', 'Running without communication bridge (standalone?)');
       return;
     }
     
     const unsubscribe = subscribe((event: GenericMfEvent) => {
       
       if (event.type === 'SET_THEME') {
-        logger.log(`[MF-Task] Zmieniam motyw na: ${event.payload}`);
+        logger.info('Event', `Zmieniam motyw na: ${event.payload}`);
         setCurrentTheme(event.payload);
       }
 
@@ -28,7 +32,7 @@ const App = ({
     });
 
     return () => {
-      logger.log('[MF-Task] Czyszczenie subskrypcji');
+      logger.info('Event', 'Czyszczenie subskrypcji');
       unsubscribe();
     };
   }, [subscribe, logger]);

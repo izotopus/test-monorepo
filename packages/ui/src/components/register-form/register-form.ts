@@ -1,7 +1,8 @@
-import { html, css, unsafeCSS } from 'lit';
+import { html, unsafeCSS } from 'lit';
 import { AstroLitElement } from '@shared/ui/base/AstroLitElement';
 import { customElement, state } from 'lit/decorators.js';
 import { registerSchema, type RegisterFormData } from '@shared/types';
+import { createLogger } from '@shared/logic';
 
 import '@shared/ui/atom/ui-input';
 import '@shared/ui/atom/ui-password';
@@ -12,8 +13,9 @@ import baseStyles from '@shared/ui/styles/tailwind-base.css?inline';
 @customElement('register-form')
 export class RegisterForm extends AstroLitElement {
   @state() private formData: Partial<RegisterFormData> = {};
-
   @state() private errors: Record<string, string> = {};
+
+  private logger = createLogger('UI');
 
   static styles = [unsafeCSS(baseStyles)];
 
@@ -46,23 +48,9 @@ export class RegisterForm extends AstroLitElement {
       detail: this.formData, bubbles: true, composed: true
     }));
   }
-
-  /* private handleSubmit(e: Event) {
-    e.preventDefault();
-    
-    const isValid = this.validate();
-    
-    if (isValid) {
-      this.dispatchEvent(new CustomEvent('form-submit', {
-        detail: this.formData,
-        bubbles: true,
-        composed: true
-      }));
-    }
-  } */
   
   async processRegistration() {
-    console.log('API Call with:', this.formData);
+    this.logger.debug('RegisterForm', 'User submitted:', this.formData);
     return new Promise(resolve => setTimeout(resolve, 2000));
   }
 
@@ -141,11 +129,11 @@ export class RegisterForm extends AstroLitElement {
             </div>
           </field-error>
         </div>
-
+        
         <button
           type="submit"
           :class="loading ? 'opacity-70 cursor-wait' : 'hover:opacity-90 active:scale-[0.98]'"
-          class="w-full mt-2 py-3 px-4 bg-custom-blue text-white font-semibold rounded-md shadow-sm transition-all duration-200 cursor-pointer border-none disabled:bg-gray-300"
+          class="w-full mt-2 py-3 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm transition-all duration-200 cursor-pointer border-none disabled:bg-gray-300"
           @click="
             if (!host.validate()) return; 
             loading = true; 

@@ -18,10 +18,6 @@ export function initAlpineBridge() {
     registrationPreview: {},
     init() {
       bindSignal(this, 'busy', isAppBusy);
-      /* effect(() => {
-        // @ts-ignore
-        this.busy = isAppBusy.value;
-      }); */
     },
     actions: {
       updatePreview(data: any) {
@@ -48,9 +44,6 @@ export function initAlpineBridge() {
     isLoading: isLoading.value,
     init() {
       bindSignal(this, 'isLoading', isLoading);
-      /* effect(() => {
-        this.isLoading = isLoading.value;
-      }); */
     },
   }));
 

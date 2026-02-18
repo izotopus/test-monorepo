@@ -1,7 +1,9 @@
 import { useState } from 'preact/hooks';
-import { logger, emitGlobalEvent } from '@shared/logic';
+import { emitGlobalEvent } from '@shared/logic';
+import { useLogger } from '../providers/LoggerProvider';
 
 export const ThemeSwitcher = () => {
+  const logger = useLogger();
   const [isDark, setIsDark] = useState(document.documentElement.classList.contains('dark'));
 
   const toggleTheme = () => {
@@ -20,7 +22,7 @@ export const ThemeSwitcher = () => {
       source: 'DASHBOARD_UI'
     });
 
-    logger.log(`Theme changed to: ${newTheme}`);
+    logger.info('UI', `Theme changed to: ${newTheme}`);
   };
 
   return (

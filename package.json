@@ -7,6 +7,7 @@
     "build:all": "pnpm recursive run build",
     "build:all:prod": "BASE_URL=/monorepo/ pnpm recursive run build",
     "postbuild:all": "node scripts/collect-modules.js",
+    "logs": "node tools/log-server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

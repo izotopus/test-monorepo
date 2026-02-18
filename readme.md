@@ -94,7 +94,8 @@ Jeśli edytor zgłasza błąd przy `@customElement`, upewnij się, że `tsconfig
 
 ### JSX IntrinsicElements
 Nowe komponenty Lit muszą być zarejestrowane w global.d.ts w aplikacji dashboard, aby TypeScript rozpoznawał niestandardowe tagi HTML wewnątrz JSX bez błędów o braku typu:
-```
+
+```bash
 import 'preact';
 
 declare module 'preact' {
@@ -114,3 +115,76 @@ Pakiety współdzielone używają trybu `"composite": true`. Jeśli TypeScript z
 
 ### Obsługa Alpine.js w środowisku Dev
 W trybie deweloperskim Dashboardu (port 3001), Alpine.js jest inicjalizowany ręcznie w `entry.tsx`. Na produkcji (Portal), Alpine jest dostarczany przez integrację Astro. Jeśli dyrektywy `x-data` nie działają, sprawdź czy `window.Alpine` jest poprawnie zdefiniowany.
+
+---
+
+
+## 🏗️ Build & Deployment
+
+System budowania oparty jest na **Turborepo**, co zapewnia optymalne wykorzystanie cache'u i równoległą kompilację wszystkich mikro-frontendów.
+
+### Komendy budowania
+| Komenda | Opis |
+| :--- | :--- |
+| `pnpm run build:all` | Buduje wszystkie paczki i aplikacje w trybie deweloperskim (z Source Maps). |
+| `pnpm run build:all:prod` | Pełna optymalizacja produkcyjna (minifikacja, tree-shaking) wszystkich modułów. |
+| `pnpm run postbuild:all` | Skrypty po-buildowe: czyszczenie assetów i przygotowanie struktury dystrybucyjnej. |
+
+### Dystrybucja modułów
+Po zakończeniu procesu budowania, artefakty są automatycznie kopiowane do centralnego katalogu:
+`📂 /modules`
+
+Dashboard w trybie Runtime dynamicznie ładuje manifesty mikro-aplikacji właśnie z tego folderu, co pozwala na wierną symulację środowiska produkcyjnego podczas lokalnego developmentu.
+
+---
+
+## 📡 Central Logger System
+
+Wprowadziliśmy autorski system logowania rozproszonego, który konsoliduje strumienie danych ze wszystkich mikro-frontendów (React, Preact, Web Components) w jednym, interaktywnym terminalu.
+
+
+
+### Architektura Loggera
+Każdy mikro-frontend korzysta ze współdzielonej paczki `@shared/logic`, która:
+* **Wykrywa środowisko**: Automatycznie aktywuje się na `localhost` lub w trybie `development`.
+* **Non-blocking**: Wykorzystuje `fetch` z flagą `keepalive: true`, co pozwala na logowanie zdarzeń nawet tuż przed zamknięciem karty/odświeżeniem strony.
+* **Kategoryzacja**: Logi są grupowane w przejrzyste tagi: `Lifecycle`, `Event`, `UX`, `Auth`, `Validation`.
+
+### Uruchamianie serwera logów
+Aby uruchomić centralny nasłuch logów w dedykowanym oknie terminala, użyj:
+
+```bash
+# Szybkie uruchomienie z roota
+pnpm logs
+
+# Lub bezpośrednio
+node tools/log-server/index.js
+```
+
+### Interfejs Terminala (Sticky Header)
+Serwer logów posiada interaktywne menu zarządzane w czasie rzeczywistym (reaguje na pojedyncze klawisze, bez potrzeby naciskania Enter):
+
+* **`[1-6]`** – Przełączanie widoczności logów dla konkretnych mikro-aplikacji (Astro, UI, Dashboard, Task Manager, Event-Bus, etc.).
+* **`[+/-]`** – Dynamiczna zmiana poziomu filtrowania (`DEBUG` → `INFO` → `WARN` → `ERROR` → `CRITICAL`).
+* **`[q]`** – Bezpieczne wyjście i automatyczne przywrócenie domyślnych ustawień przewijania terminala.
+
+
+
+---
+
+## 🛡️ Error Boundary & Validation
+
+Bezpieczeństwo i stabilność ekosystemu opiera się na dwóch kluczowych mechanizmach:
+
+### 1. Izolacja błędów (Error Boundary)
+Każdy moduł (React, Preact) jest opakowany w komponent `ErrorBoundary`. W przypadku wystąpienia błędu krytycznego:
+* **Stabilność**: Błąd jest izolowany wewnątrz modułu, zapobiegając awarii całego Dashboardu.
+* **Raportowanie**: Logger automatycznie wysyła raport `CRITICAL` wraz ze stack-trace'em do centralnego serwera logów.
+* **Komunikacja**: Przez `event-bus` emitowane jest zdarzenie `COMPONENT_CRASHED`, umożliwiając Dashboardowi wyświetlenie interfejsu awaryjnego (np. przycisku "Reboot Module").
+
+### 2. Walidacja Schematów (Zod)
+Wszystkie formularze i dane wejściowe (np. `RegisterForm`) są walidowane przy użyciu biblioteki **Zod**.
+* **UX**: Spersonalizowane, polskie komunikaty błędów (np. *"Hasła nie są identyczne"*).
+* **Analityka**: Każda nieudana próba walidacji jest logowana jako `WARN` w kategorii `Validation`, co pozwala na bieżące monitorowanie problemów użytkowników z formularzami.
+
+---

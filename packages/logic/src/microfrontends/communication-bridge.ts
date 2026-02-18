@@ -1,10 +1,12 @@
 import { GenericMfEvent, MicroAppManifest, TM_MicroAppProps } from '@shared/types';
-import { logger } from '@shared/logic';
+import { createLogger } from '@shared/logic';
 
-// Globalna szyna zdarzeń (prosty Pub/Sub wewnątrz Dashboardu)
 const globalListeners = new Set<(event: GenericMfEvent) => void>();
 
+const eventLogger = createLogger('event-bus');
+
 export const emitGlobalEvent = (event: GenericMfEvent) => {
+  eventLogger.debug('Event', `Event:`, event);
   globalListeners.forEach(listener => listener(event));
 };
 
@@ -17,11 +19,11 @@ export const createCommunicationBridge = (
   return {
     user: currentUser,
     theme: currentTheme,
-    logger,
+    // logger,
 
     onEvent: (event) => {
       if (!manifest.exposedEvents.includes(event.type)) {
-        logger.warn(`[Bridge] MF ${manifest.name} wysłał nieudokumentowany event: ${event.type}`);
+        eventLogger.error('Event', `[Bridge] MF ${manifest.name} wysłał nieudokumentowany event: ${event.type}`);
       }
 
       emitGlobalEvent({
