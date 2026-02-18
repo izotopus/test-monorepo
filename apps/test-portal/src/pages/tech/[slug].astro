@@ -14,15 +14,17 @@ export async function getStaticPaths() {
 
   const stack = homeData.data.techStack;
 
-  return stack.map((tech, index) => {
-    const prev = index > 0 ? stack[index - 1] : null;
-    const next = index < stack.length - 1 ? stack[index + 1] : null;
+  return stack
+    .sort((a, b) => (a.priority ?? 99) - (b.priority ?? 99))  
+    .map((tech, index) => {
+      const prev = index > 0 ? stack[index - 1] : null;
+      const next = index < stack.length - 1 ? stack[index + 1] : null;
 
-    return {
-      params: { slug: tech.slug },
-      props: { tech, prev, next },
-    };
-  });
+      return {
+        params: { slug: tech.slug },
+        props: { tech, prev, next },
+      };
+    });
 }
 
 const { tech, prev, next } = Astro.props;

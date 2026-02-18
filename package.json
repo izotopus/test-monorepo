@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "turbo dev",
+    "dev:logs": "VITE_ENABLE_LOGS=true turbo dev",
     "build:all": "pnpm recursive run build",
     "build:all:prod": "BASE_URL=/monorepo/ pnpm recursive run build",
     "postbuild:all": "node scripts/collect-modules.js",

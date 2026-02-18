@@ -35,6 +35,7 @@ Uruchamia portal i dashboard równolegle przy pomocy Turborepo:
 
 ```bash
 pnpm dev
+pnpm turbo dev
 pnpm turbo dev --filter=test-portal
 ```
 
@@ -44,8 +45,8 @@ pnpm turbo dev --filter=test-portal
 ### 3. Budowanie
 
 ```bash
-pnpm run build
-pnpm run build:prod
+pnpm run build:all
+pnpm run build:all:prod
 ```
 
 Oto sformatowany fragment README, gotowy do skopiowania, zaczynający się od sekcji ze stosem technologicznym:
@@ -154,6 +155,9 @@ Każdy mikro-frontend korzysta ze współdzielonej paczki `@shared/logic`, któr
 Aby uruchomić centralny nasłuch logów w dedykowanym oknie terminala, użyj:
 
 ```bash
+# Uruchomienie deweloperskie z obsługą logów
+pnpm dev:logs
+
 # Szybkie uruchomienie z roota
 pnpm logs
 

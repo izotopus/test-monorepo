@@ -1,24 +1,26 @@
 
 const LOG_SERVER_URL = 'http://localhost:9999';
 
-const sendToServer = async (payload: any) => {
+const sendToServer = (payload: any) => {
+
+  const enableLogs = (import.meta as any).env.VITE_ENABLE_LOGS === 'true';
+  if (!enableLogs) return
+
   const isLocalhost = 
     typeof window !== 'undefined' && 
     (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
   const isDev = (import.meta as any)?.env?.DEV || (import.meta as any)?.env?.MODE === 'development' || isLocalhost;
-
   if (!isDev) return;
-
-  try {
-    fetch(LOG_SERVER_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      keepalive: true,
-      body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (e) { }
+  
+  fetch(LOG_SERVER_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    keepalive: true,
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' }
+  }).catch(() => { }
+  );
 };
 
 export const createLogger = (appName: string) => {

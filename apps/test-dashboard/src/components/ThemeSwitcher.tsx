@@ -26,7 +26,7 @@ export const ThemeSwitcher = () => {
   };
 
   return (
-    <button onClick={toggleTheme} className="p-2 pr-4 bg-slate-200 dark:bg-slate-800 rounded-lg">
+    <button onClick={toggleTheme} className="p-2 pr-4 bg-slate-200 dark:bg-slate-800 rounded-lg cursor-pointer">
       {isDark ? '🌙 Dark' : '☀️ Light'}
     </button>
   );
