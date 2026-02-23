@@ -19,7 +19,6 @@ export const createCommunicationBridge = (
   return {
     user: currentUser,
     theme: currentTheme,
-    // logger,
 
     onEvent: (event) => {
       if (!manifest.exposedEvents.includes(event.type)) {

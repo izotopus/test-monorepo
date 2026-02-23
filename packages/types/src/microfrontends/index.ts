@@ -8,6 +8,12 @@ export interface MicroAppManifest {
   unmount: () => void;
 }
 
+export interface GenericMfEvent {
+  type: string;
+  payload?: any;
+  source: string;
+}
+
 export interface BaseMicroAppProps {
   standalone?: boolean;
   onEvent: (event: Omit<GenericMfEvent, 'source'>) => void;
@@ -15,8 +21,8 @@ export interface BaseMicroAppProps {
 }
 
 export interface MicroAppModule {
-  mount: (container: HTMLElement, props: BaseMicroAppProps) => void;
-  unmount?: () => void;
+  // mount: (container: HTMLElement, props: BaseMicroAppProps) => void;
+  // unmount?: () => void;
   manifest?: MicroAppManifest;
   [key: string]: any;
 }
@@ -26,10 +32,4 @@ export interface MicroAppState {
   manifest: MicroAppManifest | null;
   loading: boolean;
   error: Error | null;
-}
-
-export interface GenericMfEvent {
-  type: string;
-  payload?: any;
-  source: string;
 }

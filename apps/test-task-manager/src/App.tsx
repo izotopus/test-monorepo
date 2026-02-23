@@ -26,7 +26,7 @@ const App = ({
         setCurrentTheme(event.payload);
       }
 
-      if (event.type === 'GLOBAL_REFRESH') {
+      if (event.type === 'REFRESH_TASKS') {
         
       }
     });

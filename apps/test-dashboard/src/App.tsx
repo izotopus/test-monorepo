@@ -41,19 +41,19 @@ const TaskTab = () => {
 };
 
 const TaskAppLoader = ({ user, theme }: LoaderProps) => {
-  const { app, manifest, loading, error } = useMicroApp(getMFConfig('TASK_MANAGER'));
+  const { manifest, loading, error } = useMicroApp(getMFConfig('TASK_MANAGER'));
 
   if (loading) return <div>Ładowanie...</div>;
   if (error) throw error;
 
   return (
     <div ref={(el) => {
-      if (el && app) {
-        app.mount(
+      if (el && manifest) {
+        manifest.mount(
           el,
           createCommunicationBridge(manifest!, user, theme)
         );
-        return () => app.unmount?.();
+        return () => manifest.unmount?.();
       }
     }} />
   );

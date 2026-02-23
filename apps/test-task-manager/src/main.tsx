@@ -13,17 +13,7 @@ const logger = createLogger('task-manager');
 
 let root: Root | null = null;
 
-export const manifest: MicroAppManifest = {
-  name: 'task-manager',
-  version: '1.0.0',
-  framework: 'react',
-  exposedEvents: ['TASK_CREATED', 'TASK_DELETED'],
-  acceptedActions: ['SET_THEME', 'REFRESH_TASKS'],
-  mount: (el, props) => { },
-  unmount: () => { }
-};
-
-export const mount = (container: HTMLElement, props: any) => {
+const mount = (container: HTMLElement, props: any) => {
   logger.info('Lifecycle', 'App mounted');
   root = createRoot(container);
   root.render(
@@ -35,12 +25,22 @@ export const mount = (container: HTMLElement, props: any) => {
   );
 };
 
-export const unmount = () => {
+const unmount = () => {
   logger.info('Lifecycle', 'App unmounted');
   if (root) {
     root.unmount();
     root = null;
   }
+};
+
+export const manifest: MicroAppManifest = {
+  name: 'task-manager',
+  version: '1.0.0',
+  framework: 'react',
+  exposedEvents: ['TASK_CREATED', 'TASK_DELETED'], // Output events
+  acceptedActions: ['SET_THEME', 'REFRESH_TASKS'], // Input events
+  mount,
+  unmount,
 };
 
 if (import.meta.env.DEV && document.getElementById('root')) {
