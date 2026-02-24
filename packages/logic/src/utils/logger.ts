@@ -3,7 +3,8 @@ const LOG_SERVER_URL = 'http://localhost:9999';
 
 const sendToServer = (payload: any) => {
 
-  const enableLogs = (import.meta as any).env.VITE_ENABLE_LOGS === 'true';
+  const env = (import.meta as any).env;
+  const enableLogs = env && env?.DEV && env.VITE_ENABLE_LOGS === 'true';
   if (!enableLogs) return
 
   const isLocalhost = 

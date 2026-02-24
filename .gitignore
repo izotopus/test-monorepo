@@ -8,6 +8,7 @@ node_modules/
 .pnpm-debug.log*
 # Logi pnpm wewnątrz aplikacji i paczek
 apps/**/node_modules/
+apps/**/public/modules/
 packages/**/node_modules/
 
 # --- Monorepo / Turbo ---

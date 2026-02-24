@@ -1,0 +1,17 @@
+apps:
+  TASK_MANAGER:
+    name: "@apps/test-task-manager"
+    devUrl: "http://localhost:3002/src/main.tsx"
+    prodUrl: "/modules/task-manager/main.js"
+    distDir: "apps/test-task-manager/dist"
+    mfType: "react"
+    type: dev
+    # type: build
+  ANALYTICS:
+    name: "@apps/test-analytics"
+    devUrl: "http://localhost:3010/main.js"
+    prodUrl: "/modules/analytics/test-analytics/browser/main.js"
+    distDir: "apps/test-analytics/dist"
+    mfType: "angular"
+    type: dev
+    # type: build

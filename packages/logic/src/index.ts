@@ -8,5 +8,7 @@ export * from './microfrontends/communication-bridge';
 export * from './signals/index';
 export * from './signals/index';
 
+export * from './theme/theme-service';
+
 export * from './api/query-client';
 export * from './api/users';

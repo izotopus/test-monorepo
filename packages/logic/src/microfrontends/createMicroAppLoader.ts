@@ -42,6 +42,16 @@ export const createMicroAppLoader = (config: MFConfig, onStateChange: (state: an
   const load = async () => {
     try {
       if (type === 'react') await ensureReactPreamble(url);
+      if (type === 'angular') {
+        const polyfillsUrl = url.replace(/main\.js$/, 'polyfills.js');
+        
+        try {
+          await import(/* @vite-ignore */ polyfillsUrl);
+          console.log('✅ Angular polyfills loaded');
+        } catch (e) {
+          console.error('❌ Failed to load Angular polyfills', e);
+        }
+      }
       const module = await import(/* @vite-ignore */ url);
       app.value = module;
       loading.value = false;

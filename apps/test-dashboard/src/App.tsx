@@ -1,12 +1,12 @@
 import { h, ComponentProps } from 'preact';
 import { LocationProvider, Router, Route } from 'preact-iso';
-import { useEffect, useState } from 'preact/hooks';
+import { useRef, useEffect, useState } from 'preact/hooks';
 
 import RegisterFormComponent from './adapters/RegisterForm';
 import { useMicroApp } from './hooks/useMicroApp';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GlobalEventListener } from './components/GlobalEventListener';
-import { getMFConfig, createCommunicationBridge } from '@shared/logic';
+import { getMFConfig, createCommunicationBridge, ThemeService } from '@shared/logic';
 import { TM_MicroAppProps } from '@shared/types';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 import { useLogger } from './providers/LoggerProvider';
@@ -28,13 +28,12 @@ if (typeof window !== 'undefined' && !(window as any).Alpine) {
 const TaskTab = () => {
   const logger = useLogger();
   const user = { id: 'user-99', name: 'Jan Kowalski', role: 'developer' };
-  const theme = 'light';
 
   return (
     <ErrorBoundary name="Task Manager" logger={logger}>
       <TaskAppLoader 
         user={user} 
-        theme={theme} 
+        theme={ThemeService.getTheme()} 
       />
     </ErrorBoundary>
   );
@@ -59,6 +58,66 @@ const TaskAppLoader = ({ user, theme }: LoaderProps) => {
   );
 };
 
+const AnalyticsTab = () => {
+  const logger = useLogger();
+  const user = { id: 'user-99', name: 'Jan Kowalski', role: 'admin' };
+
+  return (
+    <ErrorBoundary name="Analytics" logger={logger}>
+      <AnalyticsLoader 
+        user={user} 
+        theme={ThemeService.getTheme()} 
+      />
+    </ErrorBoundary>
+  );
+};
+
+const AnalyticsLoader = ({ user, theme }: any) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { manifest, loading, error } = useMicroApp(getMFConfig('ANALYTICS'));
+
+  useEffect(() => {
+    let isMounted = true;
+    let unmountFn: (() => void) | undefined;
+
+    const mountApp = async () => {
+      if (containerRef.current && manifest) {
+        try {
+          const bridge = createCommunicationBridge(manifest, user, theme);
+          
+          await manifest.mount(containerRef.current, bridge);
+          
+          if (isMounted) {
+            unmountFn = () => manifest.unmount?.();
+          } else {
+            manifest.unmount?.();
+          }
+        } catch (err) {
+          console.error('Failed to mount Angular Analytics:', err);
+        }
+      }
+    };
+
+    mountApp();
+
+    return () => {
+      isMounted = false;
+      if (unmountFn) unmountFn();
+    };
+  }, [manifest, user, theme]);
+
+  if (loading) return (
+    <div class="flex items-center justify-center p-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span class="ml-3">Inicjalizacja Angulara...</span>
+    </div>
+  );
+
+  if (error) throw error;
+
+  return <div ref={containerRef} class="angular-mf-wrapper mt-8" />;
+};
+
 const StartTab = () => (
   <div class="p-6 bg-white rounded-lg shadow-sm border border-gray-200">
     <h2 class="text-xl font-bold mb-4 text-blue-700">📊 Statystyki Systemu</h2>
@@ -66,6 +125,7 @@ const StartTab = () => (
       <div class="p-4 bg-blue-50 rounded">Aktywne sesje: 124</div>
       <div class="p-4 bg-green-50 rounded">Uptime: 99.9%</div>
     </div>
+    <AnalyticsTab />
   </div>
 );
 

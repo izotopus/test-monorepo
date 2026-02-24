@@ -3,7 +3,7 @@ const path = require('path');
 
 const modules = [
   { name: 'task-manager', distDir: 'apps/test-task-manager/dist' },
-  // { name: 'analytics', distDir: 'apps/test-analytics/dist' }
+  { name: 'analytics', distDir: 'apps/test-analytics/dist' }
 ];
 
 const portalDist = path.join(__dirname, '../apps/test-portal/dist/modules');
