@@ -9,8 +9,10 @@ Projekt demonstracyjny architektury typu **Micro-frontends** wykorzystujący **p
 Repozytorium jest podzielone na aplikacje (**apps**) oraz współdzielone pakiety (**packages**):
 
 ### Apps
-- **`apps/test-portal` (Astro 5.0)**: Główna powłoka (shell) systemu. Odpowiada za routing, SEO i statyczne strony. Wykorzystuje **Astro View Transitions** do płynnej nawigacji.
-- **`apps/test-dashboard` (Preact)**: Aplikacja typu SPA (Single Page Application) montowana dynamicznie wewnątrz portalu. Obsługuje logikę panelu użytkownika.
+- **`apps/test-portal` (Astro 5.0)**: Główna powłoka (shell) systemu. Odpowiada za routing, SEO i serwowanie modułów statycznych. Wykorzystuje **Astro View Transitions** do płynnej nawigacji między modułami.
+- **`apps/test-dashboard` (Preact)**: Centralny panel sterowania (SPA), który zarządza stanem sesji i dynamicznym montowaniem mikrofrontendów.
+- **`apps/test-task-manager` (React)**: Mikrofrontend odpowiedzialny za zarządzanie zadaniami. Może działać w trybie **Live Dev** (Vite) lub być ładowany jako **moduł statyczny** z Portalu.
+- **`apps/test-analytics` (Angular 19)**: Moduł analityczny wykorzystujący potężne możliwości Angulara. Podczas budowania jest spłaszczany przez kolektor do formatu ESM, co pozwala na jego bezproblemową integrację z shellem Astro.
 
 ### Packages (`@shared/*`)
 - **`packages/ui`**: Biblioteka komponentów **Lit** (Custom Elements). Działają niezależnie od frameworka (Astro, Preact, czysty HTML).
@@ -35,12 +37,12 @@ Uruchamia portal i dashboard równolegle przy pomocy Turborepo:
 
 ```bash
 pnpm dev
-pnpm turbo dev
-pnpm turbo dev --filter=test-portal
 ```
 
 - Portal: http://localhost:4321
 - Dashboard: http://localhost:3001
+- Test TM: http://localhost:3002
+- ANalitycs: http://localhost:3010
 
 ### 3. Budowanie
 
@@ -49,9 +51,62 @@ pnpm run build:all
 pnpm run build:all:prod
 ```
 
-Oto sformatowany fragment README, gotowy do skopiowania, zaczynający się od sekcji ze stosem technologicznym:
+---
 
-Markdown
+## 🛠️ Rozwój i Budowanie (Orkiestracja)
+
+System wykorzystuje autorski skrypt `dev-orchestrator.js`, który zarządza dynamicznym przełączaniem modułów między trybem **Live Dev** (hot-reload) a **Static Build** (ładowanie z dysku).
+
+### 1. Konfiguracja Środowiska (dev-config.yaml)
+
+Sercem systemu jest plik `dev-config.yaml`. To tutaj decydujesz, które aplikacje mają być uruchomione w trybie deweloperskim, a które mają być serwowane jako gotowe paczki statyczne.
+
+```yaml
+apps:
+  TEST_PORTAL:
+    name: "test-portal"
+    devUrl: "http://localhost:4321"
+    type: dev # Zawsze uruchamia serwer Astro
+  
+  TASK_MANAGER:
+    name: "@apps/test-task-manager"
+    devUrl: "http://localhost:3002/src/main.tsx"
+    prodUrl: "/modules/task-manager/main.js"
+    distDir: "apps/test-task-manager/dist"
+    type: build # Moduł będzie serwowany statycznie z /public portalu
+```
+
+### 2. Mechanizm działania:
+- `type: dev`: Orkiestrator uruchamia proces `pnpm turbo dev` dla tej aplikacji. Dashboard łączy się z nią bezpośrednio przez `devUrl`.
+- `type: build`: Orkiestrator buduje aplikację, a skrypt `collect-modules.js` kopiuje jej pliki do `/apps/test-portal/public/modules`. Dashboard ładuje ją z portu Portalu, oszczędzając zasoby systemowe.
+
+### 3. Mechanizm działania:
+- `pnpm dev`: Standardowy start na podstawie `dev-config.yaml`. Generuje configi TS i uruchamia serwery.
+- `pnpm dev:logs`: Uruchamia środowisko z włączonym przesyłaniem logów do centralnego serwera.
+- `pnpm build:all`: Buduje wszystkie paczki i aplikacje w trybie lokalnym.
+- `pnpm build:all:prod`: Pełny build produkcyjny (wymusza `type: build` dla wszystkich MF i wstrzykuje `BASE_URL`).
+- `pnpm collect`: Ręczne odświeżenie plików statycznych w folderze `/public` portalu.
+- `pnpm collect:prod`: Kopiowanie modułów do finalnego folderu `/dist` portalu przed wdrożeniem.
+
+### 4. Zaawansowane Budowanie (Turborepo):
+Możesz budować poszczególne aplikacje z pominięciem orkiestratora, korzystając z filtrów:
+```bash
+# Buduje tylko aplikację Analytics i jej zależności
+pnpm turbo build --filter=@apps/test-analytics
+
+# Czyszczenie cache i wymuszenie świeżego buildu
+pnpm turbo build --force
+```
+
+### 5. Generowanie Konfiguracji:
+Przy każdym uruchomieniu `pnpm dev` lub pnpm `build:all`, orkiestrator generuje pliki:
+- `packages/logic/src/microfrontends/generated-config.dev.ts`
+- `packages/logic/src/microfrontends/generated-config.prod.ts`
+
+Pliki te zawierają aktualne adresy URL oraz flagi globalne (np. `ENABLE_LOGS`), które są automatycznie importowane przez mikrofrontendy.
+
+---
+
 ## 🧩 Stack Technologiczny
 
 | Warstwa | Technologia |
@@ -119,30 +174,9 @@ W trybie deweloperskim Dashboardu (port 3001), Alpine.js jest inicjalizowany rę
 
 ---
 
-
-## 🏗️ Build & Deployment
-
-System budowania oparty jest na **Turborepo**, co zapewnia optymalne wykorzystanie cache'u i równoległą kompilację wszystkich mikro-frontendów.
-
-### Komendy budowania
-| Komenda | Opis |
-| :--- | :--- |
-| `pnpm run build:all` | Buduje wszystkie paczki i aplikacje w trybie deweloperskim (z Source Maps). |
-| `pnpm run build:all:prod` | Pełna optymalizacja produkcyjna (minifikacja, tree-shaking) wszystkich modułów. |
-| `pnpm run postbuild:all` | Skrypty po-buildowe: czyszczenie assetów i przygotowanie struktury dystrybucyjnej. |
-
-### Dystrybucja modułów
-Po zakończeniu procesu budowania, artefakty są automatycznie kopiowane do centralnego katalogu:
-`📂 /modules`
-
-Dashboard w trybie Runtime dynamicznie ładuje manifesty mikro-aplikacji właśnie z tego folderu, co pozwala na wierną symulację środowiska produkcyjnego podczas lokalnego developmentu.
-
----
-
 ## 📡 Central Logger System
 
-Wprowadziliśmy autorski system logowania rozproszonego, który konsoliduje strumienie danych ze wszystkich mikro-frontendów (React, Preact, Web Components) w jednym, interaktywnym terminalu.
-
+Autorski system logowania rozproszonego, który konsoliduje strumienie danych ze wszystkich mikro-frontendów (React, Preact, Web Components) w jednym, interaktywnym terminalu.
 
 
 ### Architektura Loggera

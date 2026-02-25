@@ -1,4 +1,19 @@
 apps:
+  TEST_PORTAL:
+    name: "test-portal"
+    devUrl: "http://localhost:4321"
+    prodUrl: "/"
+    distDir: "apps/test-portal/dist"
+    mfType: "astro"
+    type: dev # portal zawsze będzie w trybie dev
+  TEST_DASHBOARD:
+    name: "@apps/test-dashboard"
+    devUrl: "http://localhost:3001"
+    prodUrl: "/modules/dashboard/main.js"
+    distDir: "apps/test-dashboard/dist"
+    mfType: "preact"
+    type: dev # dashboard zawsze będzie w trybie dev
+
   TASK_MANAGER:
     name: "@apps/test-task-manager"
     devUrl: "http://localhost:3002/src/main.tsx"
@@ -10,7 +25,7 @@ apps:
   ANALYTICS:
     name: "@apps/test-analytics"
     devUrl: "http://localhost:3010/main.js"
-    prodUrl: "/modules/analytics/test-analytics/browser/main.js"
+    prodUrl: "/modules/analytics/main.js"
     distDir: "apps/test-analytics/dist"
     mfType: "angular"
     type: dev

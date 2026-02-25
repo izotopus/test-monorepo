@@ -1,19 +1,8 @@
 
+import { GLOBAL_CONFIG } from '../microfrontends/generated-config.dev';
 const LOG_SERVER_URL = 'http://localhost:9999';
 
 const sendToServer = (payload: any) => {
-
-  const env = (import.meta as any).env;
-  const enableLogs = env && env?.DEV && env.VITE_ENABLE_LOGS === 'true';
-  if (!enableLogs) return
-
-  const isLocalhost = 
-    typeof window !== 'undefined' && 
-    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
-  const isDev = (import.meta as any)?.env?.DEV || (import.meta as any)?.env?.MODE === 'development' || isLocalhost;
-  if (!isDev) return;
-  
   fetch(LOG_SERVER_URL, {
     method: 'POST',
     mode: 'no-cors',
@@ -26,7 +15,22 @@ const sendToServer = (payload: any) => {
 
 export const createLogger = (appName: string) => {
   const log = (level: string, category: string, message: string, data?: any) => {
+
+    const isLocalhost = 
+      typeof window !== 'undefined' && 
+      (
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1'
+      );
+
+    const env = (import.meta as any).env;
+    const isDev = env?.DEV || env?.MODE === 'development' || isLocalhost;
+    if (!isDev) return;
+    
     console.log(`[${appName}][${level}] <${category}> ${message}`, data || '');
+
+    if ((GLOBAL_CONFIG.ENABLE_LOGS as unknown as boolean) !== true) return
+    // if (env.VITE_ENABLE_LOGS !== 'true') return;
 
     sendToServer({ app: appName, level, category, message, data });
   };

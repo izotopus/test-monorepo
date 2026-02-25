@@ -1,45 +1,38 @@
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const utils = require('./lib/utils');
 
-const modules = [
-  { name: 'task-manager', distDir: 'apps/test-task-manager/dist' },
-  { name: 'analytics', distDir: 'apps/test-analytics/dist' }
-];
+function collect() {
+  const isProd = process.argv.includes('--prod');
+  const config = utils.loadConfig();
+  
+  // Decydujemy o katalogu docelowym: public (dev) lub dist (prod)
+  const portalSubDir = isProd ? 'dist' : 'public';
+  const destBase = path.resolve(utils.rootDir, `apps/test-portal/${portalSubDir}/modules`);
 
-const portalDist = path.join(__dirname, '../apps/test-portal/dist/modules');
+  console.log(`\n📂 Collecting modules into: ${portalSubDir}/modules...`);
 
-function copyDirRecursive(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const [key, details] of Object.entries(config.apps)) {
+    // W trybie DEV kopiujemy tylko te, które NIE są uruchomione na żywo (type: build)
+    // W trybie PROD kopiujemy wszystko
+    if (!isProd && details.type !== 'build') continue;
 
-  for (let entry of entries) {
-    const srcPath = path.join(src, entry.name);
-    const destPath = path.join(dest, entry.name);
+    let sourceDir = path.resolve(utils.rootDir, details.distDir);
+    const folderName = key.toLowerCase().replace('_', '-');
+    const destDir = path.resolve(destBase, folderName);
 
-    if (entry.isDirectory()) {
-      copyDirRecursive(srcPath, destPath);
+    if (details.mfType === 'angular') {
+      sourceDir = utils.getAngularSource(sourceDir);
+    }
+
+    if (fs.existsSync(sourceDir)) {
+      if (fs.existsSync(destDir)) fs.rmSync(destDir, { recursive: true, force: true });
+      utils.copyDirRecursive(sourceDir, destDir);
+      utils.fixAngularHashes(destDir);
+      console.log(`  ✅ ${key} -> ${folderName}`);
     } else {
-      fs.copyFileSync(srcPath, destPath);
+      console.warn(`  ⚠️  Source not found for ${key}: ${sourceDir}`);
     }
-  }
-}
-
-async function collect() {
-  try {
-    for (const mod of modules) {
-      const sourceDir = path.join(__dirname, '..', mod.distDir);
-      const destDir = path.join(portalDist, mod.name);
-
-      if (fs.existsSync(sourceDir)) {
-        copyDirRecursive(sourceDir, destDir);
-        console.log(`✅ Module ${mod.name}: All files collected to ${destDir}`);
-      } else {
-        console.warn(`⚠️ Warning: Source directory ${sourceDir} not found. Skipping.`);
-      }
-    }
-  } catch (err) {
-    console.error('❌ Error collecting modules:', err.message);
-    process.exit(1);
   }
 }
 

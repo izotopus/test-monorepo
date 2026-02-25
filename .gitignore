@@ -22,6 +22,10 @@ dist/
 # Jeśli używasz Astro w trybie SSR, ignorujemy też wpisy serwerowe
 # .vercel / .netlify / .cloudflare
 
+# Microfrontend Generated Configs
+packages/logic/src/microfrontends/generated-config.dev.ts
+packages/logic/src/microfrontends/generated-config.prod.ts
+
 # --- Vite / Preact ---
 # Katalogi wynikowe budowania
 apps/test-dashboard/dist/

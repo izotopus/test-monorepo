@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "node scripts/dev-orchestrator.js",
-    "dev:logs": "VITE_ENABLE_LOGS=true turbo dev",
-    "build:all": "pnpm recursive run build",
-    "build:all:prod": "BASE_URL=/monorepo/ pnpm recursive run build",
-    "postbuild:all": "node scripts/collect-modules.js",
+    "dev:logs": "VITE_ENABLE_LOGS=true node scripts/dev-orchestrator.js",
+    "build:all": "node scripts/dev-orchestrator.js --prod && pnpm recursive run build",
+    "build:all:prod": "BASE_URL=/monorepo/ node scripts/dev-orchestrator.js --prod && BASE_URL=/monorepo/ pnpm recursive run build",
+    "collect": "node scripts/collect-modules.js",
+    "collect:prod": "node scripts/collect-modules.js --prod",
     "logs": "node tools/log-server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
