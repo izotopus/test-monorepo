@@ -1,4 +1,5 @@
 
+import { RegisterFormData } from '@shared/types';
 export const UI_EVENTS = {
   FORM_CHANGE: 'form-change',
   // UI_CHANGE: 'ui-change',
@@ -6,7 +7,8 @@ export const UI_EVENTS = {
 } as const;
 
 export interface UIEventPayloads {
-  [UI_EVENTS.FORM_CHANGE]: Record<string, any>;
+  [UI_EVENTS.FORM_CHANGE]: RegisterFormData;
+  // [UI_EVENTS.FORM_CHANGE]: Record<string, any>;
   // [UI_EVENTS.UI_CHANGE]: string | number;
   // [UI_EVENTS.MODAL_CLOSE]: void;
 }
