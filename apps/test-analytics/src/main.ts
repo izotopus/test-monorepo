@@ -2,8 +2,9 @@ import { createApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { ApplicationRef } from '@angular/core';
-import { type MicroAppManifest, type EventType } from '@shared/types';
+import { type MicroAppManifest, type EventType, type Analytics_MicroAppProps } from '@shared/types';
 import { registerMicroApp, createLogger } from '@shared/logic';
+import { InjectionToken } from '@angular/core';
 
 /* if ((import.meta as any).env.DEV) {
   import('./styles.css');
@@ -12,6 +13,8 @@ import { registerMicroApp, createLogger } from '@shared/logic';
 let appInstance: ApplicationRef | null = null;
 
 const logger = createLogger('analytics');
+
+export const MICRO_PROPS = new InjectionToken<Analytics_MicroAppProps>('MICRO_PROPS');
 
 const mount = async (container: HTMLElement, props: any) => {
   container.innerHTML = '<app-root></app-root>';
@@ -22,7 +25,7 @@ const mount = async (container: HTMLElement, props: any) => {
       ...appConfig,
       providers: [
         ...(appConfig.providers || []),
-        { provide: 'MICRO_PROPS', useValue: props }
+        { provide: MICRO_PROPS, useValue: props }
       ]
     });
 
@@ -49,7 +52,7 @@ export const manifest: MicroAppManifest = {
   version: '1.0.0',
   framework: 'angular',
   events: {
-    emits: [] as EventType[],
+    emits: ['nav:go-to'] as EventType[],
     listens: ['ui:theme-change'] as EventType[]
   },
   mount,

@@ -4,7 +4,6 @@ const manifestRegistry = new Map<string, MicroAppManifest>();
 
 export const registerMicroApp = (manifest: MicroAppManifest) => {
   manifestRegistry.set(manifest.name, manifest);
-  console.log(`[Shell] Registered MF: ${manifest.name}`);
 };
 
 export const canAppEmit = (appName: string, eventType: string): boolean => {

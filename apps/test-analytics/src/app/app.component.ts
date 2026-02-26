@@ -1,8 +1,8 @@
-import { Component, ViewEncapsulation, Inject, OnInit, Optional, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewEncapsulation,inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { subscribeToGlobalEvents } from '@shared/logic';
-import { type GlobalEvent } from '@shared/types' 
+import { GlobalEventsService } from './services/global-events.service' 
+import { MICRO_PROPS } from '../main' 
 
 @Component({
   selector: 'app-root',
@@ -14,7 +14,7 @@ import { type GlobalEvent } from '@shared/types'
       TEST TAILWINDA w angular 19
     </h2>
     
-    <div [class.dark]="theme === 'dark'" 
+    <div [class.dark]="theme() === 'dark'" 
         class="p-4 border border-slate-300 transition-colors duration-300
                 dark:bg-slate-900 dark:border-slate-700 dark:text-white">
       
@@ -23,7 +23,7 @@ import { type GlobalEvent } from '@shared/types'
       </h2>
       
       <p class="mb-4 text-slate-600 dark:text-slate-400">
-        Aktualny motyw: <strong class="text-black dark:text-white">{{ theme }}</strong>
+        Aktualny motyw: <strong class="text-black dark:text-white">{{ theme() }}</strong>
       </p>
       
       <p class="mb-0 text-slate-600 dark:text-slate-400">
@@ -31,33 +31,29 @@ import { type GlobalEvent } from '@shared/types'
       </p>
       <pre class="mb-4 text-xs text-indigo-600 dark:text-indigo-200 font-mono">{{ user | json }}</pre>
 
+      <p class="mb-4">
+        <button (click)="testEmit()" class="p-2 bg-blue-500 text-white rounded cursor-pointer">
+          Navigate to demo page
+        </button>
+      </p>
+
       <div class="p-4 rounded bg-slate-100 dark:bg-slate-800">
         <router-outlet></router-outlet>
       </div>
     </div>`,
 })
-export class AppComponent implements OnInit {
-  private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
-  theme: string = 'light';
-  user: any = {};
+export class AppComponent {
+  private eventsService = inject(GlobalEventsService);
+  private props = inject<any>(MICRO_PROPS, { optional: true });
 
-  constructor(@Optional() @Inject('MICRO_PROPS') private props: any) {}
+  protected theme = this.eventsService.useEventSignal(
+    'ui:theme-change',
+    this.props?.theme || 'light'
+  );
+  
+  protected user = this.props?.user || {};
 
-  ngOnInit() {
-    if (this.props) {
-      this.theme = this.props.theme || 'light';
-      this.user = this.props.user || {};
-    }
-
-    const unsubscribe = subscribeToGlobalEvents(
-      (event: GlobalEvent<string>) => {
-        this.theme = event.payload;
-        this.cdr.detectChanges();
-      },
-      { type: 'ui:theme-change' } 
-    );
-
-    this.destroyRef.onDestroy(() => unsubscribe());
+  testEmit() {
+    this.eventsService.emitAnalyticsEvent('nav:go-to', { path: '/demo' });
   }
 }

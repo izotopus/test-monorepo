@@ -75,5 +75,22 @@ const baseUrl = import.meta.env.BASE_URL;
         bootstrap();
       }, { once: false });
     </script>
+    <script>
+      import { subscribeToGlobalEvents, createLogger } from '@shared/logic';
+      import { navigate } from 'astro:transitions/client';
+      
+      const logger = createLogger('Astro');
+
+      subscribeToGlobalEvents((event) => {
+        logger.info('Navigation', `Aplikacja ${event.source} prosi o przejście do: ${event.payload.path}`);
+        navigate(event.payload.path);
+        // alert(`Nawigacja do: ${event.payload.path}`);
+      }, { type: 'nav:go-to' });
+
+      subscribeToGlobalEvents((event) => {
+        // document.documentElement.classList.toggle('dark', event.payload === 'dark');
+        logger.info('Theme', `Zaktualizowano motyw systemowy na: ${event.payload}`);
+      }, { type: 'ui:theme-change' });
+    </script>
   </body>
 </html>

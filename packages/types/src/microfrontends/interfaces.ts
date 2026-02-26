@@ -9,3 +9,14 @@ export interface TM_MicroAppProps extends BaseMicroAppProps {
   };
   theme: 'light' | 'dark';
 }
+
+
+export interface Analytics_MicroAppProps extends BaseMicroAppProps {
+  logger?: any;
+  user: { 
+    id: string; 
+    name: string;
+    role: string;
+  };
+  theme: 'light' | 'dark';
+}
