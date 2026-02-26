@@ -1,9 +1,12 @@
+import { type EventType } from '@shared/types';
 export interface MicroAppManifest {
   name: string;
   version: string;
   framework: 'react' | 'preact' | 'angular' | 'vanilla';
-  exposedEvents: string[];
-  acceptedActions: string[];
+  events: {
+    emits: EventType[],
+    listens: EventType[]
+  }
   mount: (container: HTMLElement, props: any) => void;
   unmount: () => void;
 }
@@ -16,13 +19,9 @@ export interface GenericMfEvent {
 
 export interface BaseMicroAppProps {
   standalone?: boolean;
-  onEvent: (event: Omit<GenericMfEvent, 'source'>) => void;
-  subscribe: (callback: (event: GenericMfEvent) => void) => () => void;
 }
 
 export interface MicroAppModule {
-  // mount: (container: HTMLElement, props: BaseMicroAppProps) => void;
-  // unmount?: () => void;
   manifest?: MicroAppManifest;
   [key: string]: any;
 }

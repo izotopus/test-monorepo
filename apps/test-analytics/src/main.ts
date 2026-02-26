@@ -2,8 +2,8 @@ import { createApplication } from '@angular/platform-browser';
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { ApplicationRef } from '@angular/core';
-import { MicroAppManifest } from '@shared/types';
-import { createLogger } from '@shared/logic';
+import { type MicroAppManifest, type EventType } from '@shared/types';
+import { registerMicroApp, createLogger } from '@shared/logic';
 
 /* if ((import.meta as any).env.DEV) {
   import('./styles.css');
@@ -17,6 +17,7 @@ const mount = async (container: HTMLElement, props: any) => {
   container.innerHTML = '<app-root></app-root>';
 
   try {
+    registerMicroApp(manifest);
     const app = await createApplication({
       ...appConfig,
       providers: [
@@ -47,8 +48,10 @@ export const manifest: MicroAppManifest = {
   name: 'analytics',
   version: '1.0.0',
   framework: 'angular',
-  exposedEvents: ['ANALYTICS_LOADED'],
-  acceptedActions: ['SET_THEME'],
+  events: {
+    emits: [] as EventType[],
+    listens: ['ui:theme-change'] as EventType[]
+  },
   mount,
   unmount,
 };
@@ -60,18 +63,6 @@ if ((import.meta as any).env?.DEV && rootElement) {
     standalone: true,
     user: { id: 'dev-1', name: 'Angular Dev', role: 'admin' },
     theme: 'light',
-    subscribe: (callback: any) => {
-      // logger.info?.('Event', '[Dev Mode] Subscribed to events');
-      // setTimeout(() => {
-      //   logger.info?.('Event', '[Dev Mode] Simulating Theme Change to Dark');
-      //   callback({ type: 'SET_THEME', payload: 'dark' });
-      // }, 5000);
-      
-      // return () => logger.info?.('Event', '[Dev Mode] Unsubscribed');
-    },
-    onEvent: (event: any) => {
-      logger.info?.('Event', '[Dev Mode] Event emitted:', event);
-    }
   };
 
   mount(rootElement, mockProps).catch(err => {

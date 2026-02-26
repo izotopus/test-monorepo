@@ -2,7 +2,7 @@ import { html, unsafeCSS } from 'lit';
 import { AstroLitElement } from '@shared/ui/base/AstroLitElement';
 import { customElement, state } from 'lit/decorators.js';
 import { registerSchema, type RegisterFormData } from '@shared/types';
-import { createLogger } from '@shared/logic';
+import { createLogger, emitGlobal } from '@shared/logic';
 
 import '@shared/ui/atom/ui-input';
 import '@shared/ui/atom/ui-password';

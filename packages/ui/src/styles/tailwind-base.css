@@ -2,14 +2,14 @@
 
 @source "../../../../**/*.{ts,tsx,js,html,astro}";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  /* Kolory zależne od zmiennych CSS */
   --color-brand-bg: var(--brand-bg);
   --color-brand-text: var(--brand-text);
   --font-sans: "Inter", "Segoe UI", sans-serif;
 }
 
-/* Definicja wartości dla konkretnych klas/atrybutów */
 :root {
   --brand-bg: #ffffff;
   --brand-text: #0f172a;

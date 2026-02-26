@@ -1,4 +1,4 @@
-import { emitGlobalEvent, createLogger } from '@shared/logic';
+import { createLogger, emitGlobal } from '@shared/logic';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -20,11 +20,7 @@ export const ThemeService = {
 
     localStorage.setItem(STORAGE_KEY, theme);
 
-    emitGlobalEvent({
-      type: 'SET_THEME',
-      payload: theme,
-      source
-    });
+    emitGlobal('theme-service', 'ui:theme-change', theme);
 
     logger.info('THEME_SERVICE', `Theme set to: ${theme} (Source: ${source})`);
   },

@@ -1,44 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import { TM_MicroAppProps, GenericMfEvent } from '@shared/types';
+import { TM_MicroAppProps } from '@shared/types';
 import { useLogger } from './providers/LoggerProvider';
+// import { subscribeToGlobalEvents } from '@shared/logic';
+import { emitTaskEvent, useGlobalEvent } from './helpers/events';
 
 const App = ({
   standalone = false,
   theme: initialTheme,
   user,
-  subscribe,
-  // logger,
-  onEvent,
 }: TM_MicroAppProps) => {
   const logger = useLogger();
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
 
-  useEffect(() => {
-    if (typeof subscribe !== 'function') {
-      logger.error('', 'Running without communication bridge (standalone?)');
-      return;
-    }
-    
-    const unsubscribe = subscribe((event: GenericMfEvent) => {
-      
-      if (event.type === 'SET_THEME') {
+  useGlobalEvent('ui:theme-change', (theme) => {
+    logger.info('Event', `Zmieniam motyw na: ${theme}`);
+    setCurrentTheme(theme);
+  });
+
+  /* useEffect(() => {
+    const unsubscribe = subscribeToGlobalEvents(
+      (event) => {
         logger.info('Event', `Zmieniam motyw na: ${event.payload}`);
         setCurrentTheme(event.payload);
-      }
+      },
+      { type: 'ui:theme-change' }
+      // { type: /^ui:theme-change/ }
+    );
+    return unsubscribe;
+  }, []); */
+  
+  const handleCreateTask = () => {
+    emitTaskEvent('tasks:created', { title: 'Nowe zadanie' });
+    /* emitGlobal('task-manager', 'tasks:created', {
+      title: 'Nowe zadanie'
+    }) */
+  }
 
-      if (event.type === 'REFRESH_TASKS') {
-        
-      }
-    });
-
-    return () => {
-      logger.info('Event', 'Czyszczenie subskrypcji');
-      unsubscribe();
-    };
-  }, [subscribe, logger]);
+  const handleDeleteTask = () => {
+    emitTaskEvent('tasks:deleted', { id: 1234 });
+  }
 
   return (
-    <div className={`p-4 transition-colors duration-300 ${currentTheme === 'dark' ? 'bg-slate-900 text-white' : 'bg-white text-slate-900'}`}>
+    <div className={`p-4 transition-colors duration-300 dark:bg-slate-900 dark:text-white bg-white text-slate-900`}>
 
       <h2 className="text-xl font-bold">
         <span className="text-2xl">🚀</span>
@@ -47,7 +50,7 @@ const App = ({
       </h2>
 
       <p className="text-slate-400 mb-6">
-        Jestem komponentem napisanym w <strong className={`transition-colors duration-300 ${currentTheme === 'dark' ? 'text-slate-200' : 'text-black'}`}>React</strong>, 
+        Jestem komponentem napisanym w <strong className={`transition-colors duration-300 text-black dark:text-slate-200`}>React</strong>, 
         działającym wewnątrz dashboardu.
       </p>
 
@@ -59,16 +62,27 @@ const App = ({
 
       <p>Aktualny motyw: <span className="font-mono">{currentTheme}</span></p>
       
-      <button 
-        onClick={() => onEvent({ type: 'TASK_CREATED', payload: { title: 'Nowe zadanie' } })}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded shadow"
-      >
-        Dodaj zadanie
-      </button>
+      <div className="mb-4 flex items-center gap-4">
+        <button 
+          onClick={handleCreateTask}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded shadow cursor-pointer"
+        >
+          Dodaj zadanie
+        </button>
 
-      <hr className="my-8" />
+        <button 
+          onClick={handleDeleteTask}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded shadow cursor-pointer"
+        >
+          Usuń zadanie
+        </button>
+      </div>
 
-      <p>Propsy z test-dashboard: {JSON.stringify(user, null, 2)}</p>
+      <p className="mb-0 text-slate-600 dark:text-slate-400">
+        Propsy z test-dashboard: 
+      </p>
+      <pre className="mb-4 text-xs text-indigo-600 dark:text-indigo-200 font-mono">{JSON.stringify(user, null, 2)}</pre>
+
     </div>
   );
 };

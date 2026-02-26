@@ -6,7 +6,7 @@ import RegisterFormComponent from './adapters/RegisterForm';
 import { useMicroApp } from './hooks/useMicroApp';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { GlobalEventListener } from './components/GlobalEventListener';
-import { getMFConfig, createCommunicationBridge, ThemeService } from '@shared/logic';
+import { getMFConfig, ThemeService } from '@shared/logic';
 import { TM_MicroAppProps } from '@shared/types';
 import { ThemeSwitcher } from './components/ThemeSwitcher';
 import { useLogger } from './providers/LoggerProvider';
@@ -50,7 +50,9 @@ const TaskAppLoader = ({ user, theme }: LoaderProps) => {
       if (el && manifest) {
         manifest.mount(
           el,
-          createCommunicationBridge(manifest!, user, theme)
+          {
+            user, theme
+          }
         );
         return () => manifest.unmount?.();
       }
@@ -72,7 +74,7 @@ const AnalyticsTab = () => {
   );
 };
 
-const AnalyticsLoader = ({ user, theme }: any) => {
+const AnalyticsLoader = ({ user, theme }: LoaderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { manifest, loading, error } = useMicroApp(getMFConfig('ANALYTICS'));
 
@@ -83,9 +85,12 @@ const AnalyticsLoader = ({ user, theme }: any) => {
     const mountApp = async () => {
       if (containerRef.current && manifest) {
         try {
-          const bridge = createCommunicationBridge(manifest, user, theme);
-          
-          await manifest.mount(containerRef.current, bridge);
+          await manifest.mount(
+            containerRef.current,
+            {
+              user, theme
+            }
+          );
           
           if (isMounted) {
             unmountFn = () => manifest.unmount?.();
@@ -222,7 +227,7 @@ export const App = () => {
             Formularze rejestracyjny
           </button>
           
-          {currentPath === '/task' && <div className="ml-auto mr-0">
+          {(currentPath === '/' || currentPath === '/task') && <div className="ml-auto mr-0">
             <ThemeSwitcher />
           </div>}
         </nav>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import App from './App';
-import { MicroAppManifest } from '@shared/types';
-import { createLogger } from '@shared/logic';
+import { type MicroAppManifest, type EventType, type EventPayload } from '@shared/types';
+import { registerMicroApp, emitGlobal, createLogger } from '@shared/logic';
 import { LoggerProvider } from './providers/LoggerProvider';
 
 if (import.meta.env.DEV) {
@@ -15,6 +15,7 @@ let root: Root | null = null;
 
 const mount = (container: HTMLElement, props: any) => {
   logger.info('Lifecycle', 'App mounted');
+  registerMicroApp(manifest);
   root = createRoot(container);
   root.render(
     <React.StrictMode>
@@ -37,8 +38,10 @@ export const manifest: MicroAppManifest = {
   name: 'task-manager',
   version: '1.0.0',
   framework: 'react',
-  exposedEvents: ['TASK_CREATED', 'TASK_DELETED'], // Output events
-  acceptedActions: ['SET_THEME', 'REFRESH_TASKS'], // Input events
+  events: {
+    emits: ['tasks:created', 'tasks:deleted'] as EventType[],
+    listens: ['ui:theme-change'] as EventType[]
+  },
   mount,
   unmount,
 };
@@ -47,7 +50,7 @@ if (import.meta.env.DEV && document.getElementById('root')) {
   const mockProps = {
     standalone: true,
     user: { id: 'dev-1', name: 'Developer', role: 'admin' },
-    theme: 'light',
+    theme: 'dark',
     logger,
     subscribe: () => {
       logger.info('Event', '[Dev Mode] Subscribed to events');

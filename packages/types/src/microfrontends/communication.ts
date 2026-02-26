@@ -1,11 +1,7 @@
-import { BaseMicroAppProps } from '@shared/types';
+export const SYSTEM_SOURCES = [
+  'theme-service',
+  'auth-service',
+  // ...
+] as const;
 
-export interface TM_MicroAppProps extends BaseMicroAppProps {
-  logger?: any;
-  user: { 
-    id: string; 
-    name: string;
-    role: string;
-  };
-  theme: 'light' | 'dark';
-}
+export type SystemSource = typeof SYSTEM_SOURCES[number];
