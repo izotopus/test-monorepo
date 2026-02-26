@@ -1,4 +1,5 @@
 import { LitElement } from 'lit';
+import { type UI_EVENTS, type UIEventPayloads } from '@shared/types';
 
 export class AstroLitElement extends LitElement {
   protected static alpineObservedProps: string[] = [];
@@ -45,5 +46,20 @@ export class AstroLitElement extends LitElement {
   get alpineData() {
     const root = this.renderRoot.querySelector('[x-data]') as any;
     return root?._x_dataStack?.[0] || {};
+  }
+  
+  protected emitUiEvent<K extends keyof UIEventPayloads>(
+    type: K, 
+    detail: UIEventPayloads[K],
+    options: CustomEventInit = {}
+  ) {
+    const event = new CustomEvent(type, {
+      detail,
+      bubbles: true,
+      composed: true,
+      ...options
+    });
+    
+    this.dispatchEvent(event);
   }
 }

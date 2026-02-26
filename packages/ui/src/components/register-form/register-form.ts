@@ -44,9 +44,8 @@ export class RegisterForm extends AstroLitElement {
       this.validate();
     }
 
-    this.dispatchEvent(new CustomEvent('form-change', {
-      detail: this.formData, bubbles: true, composed: true
-    }));
+
+    this.emitUiEvent('form-change', this.formData);
   }
   
   async processRegistration() {

@@ -2,6 +2,8 @@ import { z } from 'zod';
 import { TaskManagerEvents } from './task-manager';
 import { AnalyticsEvents } from './analytics';
 
+export * from './ui'
+
 export const EventSchema = {
   ...TaskManagerEvents,
   ...AnalyticsEvents,
