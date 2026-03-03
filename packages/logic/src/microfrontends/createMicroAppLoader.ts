@@ -46,16 +46,16 @@ export const createMicroAppLoader = (config: MFConfig, onStateChange: (state: an
         : `${window.location.origin}${url}`;
 
       if (type === 'react') await ensureReactPreamble(url);
-      if (type === 'angular') {
-        const polyfillsUrl = absoluteUrl.replace(/main\.js$/, 'polyfills.js');
+      // if (type === 'angular') {
+      //   const polyfillsUrl = absoluteUrl.replace(/main\.js$/, 'polyfills.js');
         
-        try {
-          await import(/* @vite-ignore */ polyfillsUrl);
-          console.log('✅ Angular polyfills loaded');
-        } catch (e) {
-          console.error('❌ Failed to load Angular polyfills', e);
-        }
-      }
+      //   try {
+      //     await import(/* @vite-ignore */ polyfillsUrl);
+      //     console.log('✅ Angular polyfills loaded');
+      //   } catch (e) {
+      //     console.error('❌ Failed to load Angular polyfills', e);
+      //   }
+      // }
 
       const module = await import(/* @vite-ignore */ absoluteUrl);
       app.value = module;

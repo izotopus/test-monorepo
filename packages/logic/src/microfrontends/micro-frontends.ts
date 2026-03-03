@@ -9,7 +9,7 @@ export interface MFConfig {
 import { MF_CONFIG as DEV_CONFIG } from './generated-config.dev';
 import { MF_CONFIG as PROD_CONFIG } from './generated-config.prod';
 
-export const MF_CONFIG = (import.meta as any).env.DEV ? DEV_CONFIG : PROD_CONFIG;
+export const MF_CONFIG = (import.meta as any).env?.DEV ? DEV_CONFIG : PROD_CONFIG;
 
 export type MFKey = keyof typeof MF_CONFIG;
 

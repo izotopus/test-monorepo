@@ -17,6 +17,7 @@ const utils = {
   },
 
   copyDirRecursive(src, dest) {
+    if (dest.startsWith(src)) return;
     if (!fs.existsSync(src)) return;
     fs.mkdirSync(dest, { recursive: true });
     fs.readdirSync(src, { withFileTypes: true }).forEach(entry => {
